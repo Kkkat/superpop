@@ -25,10 +25,10 @@ module.exports = {
                 test: /\.css$/,
                 loaders: ["style", "css", "postcss"]
             },
-            // {
-            //     test: /\.(png|jpg)$/,
-            //     loader: 'url?limit=40000'
-            // },
+            {
+                test: /\.(png|jpg)$/,
+                loader: 'url?limit=40000'
+            },
             {
                 test: /\.jsx?$/,
                 loader: 'babel',

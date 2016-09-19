@@ -1,4 +1,8 @@
 /* 测试 具体颜色 kat你改 */
-html{
+body{
     background-color: #eee;
+}
+
+canvas {
+	background-image: url("img/bg.jpg");
 }

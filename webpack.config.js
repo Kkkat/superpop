@@ -2,7 +2,7 @@
 const path = require('path');
 const precss = require('precss');
 const autoprefixer = require('autoprefixer');
-const DashboardPlugin = require('webpack-dashboard/plugin');
+
 
 module.exports = {
     cache: false,
@@ -10,7 +10,7 @@ module.exports = {
         path.resolve(__dirname, 'super.js')
     ],
     output: {
-        path: './dist',
+        path: path.resolve(__dirname, "dist"),
         filename: 'bundle.js'
     },
     devtool: 'eval-source-map',
@@ -40,7 +40,7 @@ module.exports = {
     },
     postcss: function () {
         return [precss, autoprefixer]
-    },
+    }
     // plugins: [
     //         new webpack.optimize.UglifyJsPlugin({
     //             compress: {
@@ -48,7 +48,4 @@ module.exports = {
     //             }
     //         })
     // ],
-    plugins: [
-        new DashboardPlugin()
-    ]
 };

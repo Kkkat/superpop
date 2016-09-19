@@ -51,13 +51,13 @@
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
-	eval("'use strict';\n\n__webpack_require__(2);\n__webpack_require__(3);//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8vLi9zdXBlci5qcz9lZmIxIl0sIm5hbWVzIjpbInJlcXVpcmUiXSwibWFwcGluZ3MiOiI7O0FBQUEsbUJBQUFBLENBQVEsQ0FBUjtBQUNBLG1CQUFBQSxDQUFRLENBQVIiLCJmaWxlIjoiMS5qcyIsInNvdXJjZXNDb250ZW50IjpbInJlcXVpcmUoJy4vc3JjL2luZGV4LmpzJyk7XG5yZXF1aXJlKCcuL3NyYy9pbmRleC5jc3MnKTtcblxuXG4vKiogV0VCUEFDSyBGT09URVIgKipcbiAqKiAuL3N1cGVyLmpzXG4gKiovIl0sInNvdXJjZVJvb3QiOiIifQ==");
+	eval("'use strict';\n\n// webpack的入口文件 , 用于加载资源模块\n__webpack_require__(2);\n__webpack_require__(3);//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8vLi9zdXBlci5qcz9lZmIxIl0sIm5hbWVzIjpbInJlcXVpcmUiXSwibWFwcGluZ3MiOiI7O0FBQUE7QUFDQSxtQkFBQUEsQ0FBUSxDQUFSO0FBQ0EsbUJBQUFBLENBQVEsQ0FBUiIsImZpbGUiOiIxLmpzIiwic291cmNlc0NvbnRlbnQiOlsiLy8gd2VicGFja+eahOWFpeWPo+aWh+S7tiAsIOeUqOS6juWKoOi9vei1hOa6kOaooeWdl1xucmVxdWlyZSgnLi9zcmMvaW5kZXguanMnKTtcbnJlcXVpcmUoJy4vc3JjL2luZGV4LmNzcycpO1xuXG5cbi8qKiBXRUJQQUNLIEZPT1RFUiAqKlxuICoqIC4vc3VwZXIuanNcbiAqKi8iXSwic291cmNlUm9vdCI6IiJ9");
 
 /***/ },
 /* 2 */
 /***/ function(module, exports) {
 
-	eval("\"use strict\";//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiIyLmpzIiwic291cmNlUm9vdCI6IiJ9");
+	eval("// 主要的js, 名字可以改, 改完要在 ../super.js 那里也更改\n\"use strict\";//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8vLi9zcmMvaW5kZXguanM/OTU1MiJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQSIsImZpbGUiOiIyLmpzIiwic291cmNlc0NvbnRlbnQiOlsiLy8g5Li76KaB55qEanMsIOWQjeWtl+WPr+S7peaUuSwg5pS55a6M6KaB5ZyoIC4uL3N1cGVyLmpzIOmCo+mHjOS5n+abtOaUuVxuXG5cbi8qKiBXRUJQQUNLIEZPT1RFUiAqKlxuICoqIC4vc3JjL2luZGV4LmpzXG4gKiovIl0sInNvdXJjZVJvb3QiOiIifQ==");
 
 /***/ },
 /* 3 */

@@ -4,8 +4,8 @@
   "description": "球球大作战网页版",
   "main": "super.js",
   "scripts": {
-    "build": "webpack-dashboard -- webpack",
-    "dev": "webpack-dashboard -- webpack-dev-server --content-base dist/ --config ./webpack.config.js"
+    "build": "webpack",
+    "dev": "webpack-dev-server --content-base dist/ --config ./webpack.config.js"
   },
   "keywords": [
     "游戏",
@@ -25,7 +25,6 @@
     "postcss-loader": "^0.13.0",
     "precss": "^1.4.0",
     "style-loader": "^0.13.1",
-    "webpack": "^1.13.2",
-    "webpack-dashboard": "^0.1.8"
+    "webpack": "^1.13.2"
   }
 }

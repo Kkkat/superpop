@@ -111,7 +111,6 @@ Ball.prototype = {
 	runningBall: function() {
 		// console.log(this.runningBall);
 		var _this = this;
-		window.requestAnimationFrame(_this.runningBall);
 		// setTimeout(function() {
 		// 	_this.runningBall();
 		// }, 100);

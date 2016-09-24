@@ -8,15 +8,16 @@ window.onload = function() {
 	}
 	DragDrop.enable();
 
-}
+};
 
 var DragDrop = function(){
+    var controlPanel = document.querySelector('.control-panel');
 	var	dragging = null,
 		diffX = 0,
 		diffY = 0;
 
 	function handleEvent(e) {
-
+        e.preventDefault();
 		// 获取事件和对象
 		var event = e ? e: window.event;
 		var target = e.target || e.srcElement;
@@ -26,12 +27,13 @@ var DragDrop = function(){
 			case "touchstart":
 				if(target.className.indexOf("draggable") > 1) {
 					dragging = target;
-				}
+				}else {
+				    return;
+                }
 				break;
 
 			case "touchmove":
 				if(dragging !== null) {
-
 					// 指定位置
 					diffX = event.touches[0].clientX - target.parentNode.offsetLeft;
 					diffY = event.touches[0].clientY - target.parentNode.offsetTop;
@@ -46,6 +48,9 @@ var DragDrop = function(){
 				break;
 
 			case "touchend":
+			    if(dragging === null){
+			        return;
+                }
 				dragging.style.left = "50%";
 				dragging.style.top = "50%";
 				dragging = null;
@@ -55,15 +60,15 @@ var DragDrop = function(){
 
 	return {
 		enable: function() {
-			document.addEventListener("touchstart", handleEvent, false);
-			document.addEventListener("touchmove", handleEvent, false);
-			document.addEventListener("touchend", handleEvent, false);
+            controlPanel.addEventListener("touchstart", handleEvent);
+            controlPanel.addEventListener("touchmove", handleEvent);
+            controlPanel.addEventListener("touchend", handleEvent);
 		},
 
 		disable: function() {
-			document.removeEventListener("touchstart", handleEvent);
-			document.removeEventListener("touchmove", handleEvent);
-			document.removeEventListener("touchend", handleEvent);
+			controlPanel.removeEventListener("touchstart", handleEvent);
+			controlPanel.removeEventListener("touchmove", handleEvent);
+			controlPanel.removeEventListener("touchend", handleEvent);
 		}
 	}
 

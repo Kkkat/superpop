@@ -1,10 +1,11 @@
 var canvas, ctx;
+var ball;
 
 window.onload = function() {
 	canvas = document.getElementById("ball");
 	if(canvas.getContext) {
 		ctx = canvas.getContext("2d");
-		var ball = new Ball();
+		ball = new Ball();
 	}
 	DragDrop.enable();
 
@@ -34,6 +35,7 @@ var DragDrop = function(){
 
 			case "touchmove":
 				if(dragging !== null) {
+                    var abX, abY;
 					// 指定位置
 					diffX = event.touches[0].clientX - target.parentNode.offsetLeft;
 					diffY = event.touches[0].clientY - target.parentNode.offsetTop;
@@ -44,6 +46,28 @@ var DragDrop = function(){
 					dragging.style.left =  diffX + 'px';
 					dragging.style.top = diffY + 'px';
 
+                    // 这里要判断方向
+                    // 算绝对的值
+                    if (diffX > 65 && diffY > 65) {
+                        // 第一象限
+                        abX = calAbs(diffX);
+                        abY = calAbs(diffY);
+                    } else if (diffX > 65 && diffY < 65) {
+                        // 第四象限
+                        abX = calAbs(diffX);
+                        abY = -calAbs(diffY);
+                    } else if (diffX < 65 && diffY > 65) {
+                        // 第二象限
+                        abX = -calAbs(diffX);
+                        abY = calAbs(diffY);
+                    } else if (diffX < 65 && diffY < 65) {
+                        // 第三象限
+                        abX = -calAbs(diffX);
+                        abY = -calAbs(diffY);
+                    }
+
+                    ball.setSpeedX(abX);
+                    ball.setSpeedY(abY);
 				}
 				break;
 
@@ -75,13 +99,13 @@ var DragDrop = function(){
 }();
 
  // requestAnim
-// window.requestAnimFrame = (function(){
-//     return  window.requestAnimationFrame       ||
-//           	window.webkitRequestAnimationFrame ||
-//           	window.mozRequestAnimationFrame    ||
-//           	window.oRequestAnimationFrame      ||
-//           	window.msRequestAnimationFrame
-// })();
+window.requestAnimFrame = (function(){
+    return  window.requestAnimationFrame       ||
+          	window.webkitRequestAnimationFrame ||
+          	window.mozRequestAnimationFrame    ||
+          	window.oRequestAnimationFrame      ||
+          	window.msRequestAnimationFrame
+})();
 
 // 球球
 function Ball() {
@@ -92,16 +116,33 @@ Ball.prototype = {
 
 	x: 200,
 
-	y: 100,
+	y: 200,
 
-	speedX: 10,
+	speedX: 0,
 
-	speedY: 20,
+	speedY: 0,
+
+    speed: 80,
 
 	init: function() {
 		// this.drawABall(ctx, 200, 100, 10, "#ff5656");
 		this.runningBall();
 	},
+
+    // 设置x轴的速度
+    setSpeedX: function(x) {
+	    this.speedX = x;
+    },
+
+    // 设置y轴的速度
+    setSpeedY: function(y) {
+        this.speedY = y;
+    },
+
+    //
+    setSpeed: function(s) {
+        this.speed = s;
+    },
 
 	drawABall: function(x, y, r, bColor) {
 		ctx.save();
@@ -116,12 +157,14 @@ Ball.prototype = {
 	runningBall: function() {
         this.runningBall = this.runningBall.bind(this);
 		window.requestAnimationFrame(this.runningBall);
-		// setTimeout(function() {
-		// 	_this.runningBall();
-		// }, 1000/60);
 		ctx.clearRect(0, 0, 1024, 640);
 		this.drawABall(this.x, this.y, 10, "#ff5656");
-		this.x += this.speedX / 100;
-		this.y += this.speedY / 100;
+		this.x += this.speedX / this.speed;
+		this.y += this.speedY / this.speed;
 	}
 };
+
+// 计算绝对值
+function calAbs(num) {
+    return Math.abs(num - 65);
+}

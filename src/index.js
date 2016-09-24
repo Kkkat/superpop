@@ -75,13 +75,13 @@ var DragDrop = function(){
 }();
 
  // requestAnim
-window.requestAnimFrame = (function(){
-    return  window.requestAnimationFrame       ||
-          	window.webkitRequestAnimationFrame ||
-          	window.mozRequestAnimationFrame    ||
-          	window.oRequestAnimationFrame      ||
-          	window.msRequestAnimationFrame
-})();
+// window.requestAnimFrame = (function(){
+//     return  window.requestAnimationFrame       ||
+//           	window.webkitRequestAnimationFrame ||
+//           	window.mozRequestAnimationFrame    ||
+//           	window.oRequestAnimationFrame      ||
+//           	window.msRequestAnimationFrame
+// })();
 
 // 球球
 function Ball() {
@@ -114,15 +114,14 @@ Ball.prototype = {
 	},
 
 	runningBall: function() {
-		// console.log(this.runningBall);
-		var _this = this;
-		window.requestAnimationFrame(_this.runningBall);
+        this.runningBall = this.runningBall.bind(this);
+		window.requestAnimationFrame(this.runningBall);
 		// setTimeout(function() {
 		// 	_this.runningBall();
-		// }, 100);
-		// ctx.clearRect(0, 0, 1024, 640);
+		// }, 1000/60);
+		ctx.clearRect(0, 0, 1024, 640);
 		this.drawABall(this.x, this.y, 10, "#ff5656");
-		this.x += this.speedX;
-		this.y += this.speedY;
+		this.x += this.speedX / 100;
+		this.y += this.speedY / 100;
 	}
-}
+};

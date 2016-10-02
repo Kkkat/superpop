@@ -40,35 +40,49 @@ var DragDrop = function () {
                     // 指定位置
                     diffX = event.touches[0].clientX - target.parentNode.offsetLeft;
                     diffY = event.touches[0].clientY - target.parentNode.offsetTop;
-                    if (diffX >= 115) diffX = 115;
-                    if (diffX <= -15) diffX = -15;
-                    if (diffY >= 115) diffY = 115;
-                    if (diffY <= -15) diffY = -15;
-                    dragging.style.left = diffX + 'px';
-                    dragging.style.top = diffY + 'px';
-
                     // 这里要判断方向
                     // 算绝对的值
-                    if (diffX > 65 && diffY > 65) {
-                        // 第一象限
+                    var distance = Math.sqrt(Math.pow(diffX - 50, 2) + Math.pow(diffY - 50, 2));
+                    if (diffX > 50 && diffY > 50) {
+                        // 桌面上的第四象限,但是确是第一象限的取值
+                        if (distance > 65) {
+                            diffX = calDiffX(diffX, diffY) + 50;
+                            diffY = calDiffY(diffX, diffY) + 50;
+                        }
                         abX = calAbs(diffX);
                         abY = calAbs(diffY);
-                    } else if (diffX > 65 && diffY < 65) {
-                        // 第四象限
+
+                    } else if (diffX > 50 && diffY < 50) {
+                        // 桌面上的第一象限,但是确是第四象限的取值
+                        if (distance > 65) {
+                            diffX = calDiffX(calAbs(diffX), -calAbs(diffY)) + 50;
+                            diffY = calDiffY(calAbs(diffX), -calAbs(diffY)) + 50;
+                        }
                         abX = calAbs(diffX);
                         abY = -calAbs(diffY);
-                    } else if (diffX < 65 && diffY > 65) {
-                        // 第二象限
+                    } else if (diffX < 50 && diffY > 50) {
+                        // 桌面上的第三象限,但是却是第二象限的取值
+                        if (distance > 65) {
+                            diffX = calDiffX(-calAbs(diffX), calAbs(diffY)) + 50;
+                            diffY = calDiffY(-calAbs(diffX), calAbs(diffY)) + 50;
+                        }
                         abX = -calAbs(diffX);
                         abY = calAbs(diffY);
-                    } else if (diffX < 65 && diffY < 65) {
-                        // 第三象限
+                    } else if (diffX < 50 && diffY < 50) {
+                        // 桌面上的第二象限,但是却是第三象限的取值
+                        if (distance > 65) {
+                            diffX = calDiffX(-calAbs(diffX), -calAbs(diffY)) + 50;
+                            diffY = calDiffY(-calAbs(diffX), -calAbs(diffY)) + 50;
+                        }
                         abX = -calAbs(diffX);
                         abY = -calAbs(diffY);
                     }
+
+                    dragging.style.left = diffX + 'px';
+                    dragging.style.top = diffY + 'px';
                     // 设置默认值,防止小球突然消失
-                    abX = abX ? abX : 10;
-                    abY = abY ? abY : 10;
+                    abX = abX ? abX : 0;
+                    abY = abY ? abY : 0;
                     ball.setSpeedX(abX);
                     ball.setSpeedY(abY);
                 }
@@ -163,7 +177,15 @@ Ball.prototype = {
     }
 };
 
-// 计算绝对值
+// 计算绝对值,坐标绝对值
 function calAbs(num) {
-    return Math.abs(num - 65);
+    return Math.abs(num - 50);
+}
+// 计算diffX的值
+function calDiffX(x, y) {
+    return 65 * Math.cos(Math.atan2(y, x));
+}
+// 计算diffY的值
+function calDiffY(x, y) {
+    return 65 * Math.sin(Math.atan2(y, x));
 }

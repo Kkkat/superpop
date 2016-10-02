@@ -43,34 +43,34 @@ var DragDrop = function () {
                     // 这里要判断方向
                     // 算绝对的值
                     var distance = Math.sqrt(Math.pow(diffX - 50, 2) + Math.pow(diffY - 50, 2));
-                    if (diffX > 50 && diffY > 50) {
+                    if (diffX > 50 && diffY >= 50) {
                         // 桌面上的第四象限,但是确是第一象限的取值
-                        if (distance > 65) {
+                        if (distance >= 65) {
                             diffX = calDiffX(diffX, diffY) + 50;
                             diffY = calDiffY(diffX, diffY) + 50;
                         }
                         abX = calAbs(diffX);
                         abY = calAbs(diffY);
 
-                    } else if (diffX > 50 && diffY < 50) {
+                    } else if (diffX >= 50 && diffY < 50) {
                         // 桌面上的第一象限,但是确是第四象限的取值
-                        if (distance > 65) {
+                        if (distance >= 65) {
                             diffX = calDiffX(calAbs(diffX), -calAbs(diffY)) + 50;
                             diffY = calDiffY(calAbs(diffX), -calAbs(diffY)) + 50;
                         }
                         abX = calAbs(diffX);
                         abY = -calAbs(diffY);
-                    } else if (diffX < 50 && diffY > 50) {
+                    } else if (diffX <= 50 && diffY > 50) {
                         // 桌面上的第三象限,但是却是第二象限的取值
-                        if (distance > 65) {
+                        if (distance >= 65) {
                             diffX = calDiffX(-calAbs(diffX), calAbs(diffY)) + 50;
                             diffY = calDiffY(-calAbs(diffX), calAbs(diffY)) + 50;
                         }
                         abX = -calAbs(diffX);
                         abY = calAbs(diffY);
-                    } else if (diffX < 50 && diffY < 50) {
+                    } else if (diffX < 50 && diffY <= 50) {
                         // 桌面上的第二象限,但是却是第三象限的取值
-                        if (distance > 65) {
+                        if (distance >= 65) {
                             diffX = calDiffX(-calAbs(diffX), -calAbs(diffY)) + 50;
                             diffY = calDiffY(-calAbs(diffX), -calAbs(diffY)) + 50;
                         }

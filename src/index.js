@@ -155,7 +155,7 @@ Ball.prototype = {
 
     runningBall: function () {
         this.runningBall = this.runningBall.bind(this);
-        ctx.clearRect(this.x - this.r, this.y - this.r, 2 * this.r + 5, 2 * this.r + 5);
+        ctx.clearRect(this.x - this.r - 1, this.y - this.r - 1, 2 * this.r + 2, 2 * this.r + 2);
         this.x += this.speedX / this.speed;
         this.y += this.speedY / this.speed;
         this.drawABall(this.x, this.y, this.r, "#ff5656");

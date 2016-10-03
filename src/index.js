@@ -45,7 +45,7 @@ var DragDrop = function () {
                     var distance = Math.sqrt(Math.pow(diffX - 50, 2) + Math.pow(diffY - 50, 2));
                     if (diffX > 50 && diffY >= 50) {
                         // 桌面上的第四象限,但是确是第一象限的取值
-                        if (distance >= 65) {
+                        if (distance > 65) {
                             diffX = calDiffX(diffX, diffY) + 50;
                             diffY = calDiffY(diffX, diffY) + 50;
                         }
@@ -54,7 +54,7 @@ var DragDrop = function () {
 
                     } else if (diffX >= 50 && diffY < 50) {
                         // 桌面上的第一象限,但是确是第四象限的取值
-                        if (distance >= 65) {
+                        if (distance > 65) {
                             diffX = calDiffX(calAbs(diffX), -calAbs(diffY)) + 50;
                             diffY = calDiffY(calAbs(diffX), -calAbs(diffY)) + 50;
                         }
@@ -62,7 +62,7 @@ var DragDrop = function () {
                         abY = -calAbs(diffY);
                     } else if (diffX <= 50 && diffY > 50) {
                         // 桌面上的第三象限,但是却是第二象限的取值
-                        if (distance >= 65) {
+                        if (distance > 65) {
                             diffX = calDiffX(-calAbs(diffX), calAbs(diffY)) + 50;
                             diffY = calDiffY(-calAbs(diffX), calAbs(diffY)) + 50;
                         }
@@ -70,7 +70,7 @@ var DragDrop = function () {
                         abY = calAbs(diffY);
                     } else if (diffX < 50 && diffY <= 50) {
                         // 桌面上的第二象限,但是却是第三象限的取值
-                        if (distance >= 65) {
+                        if (distance > 65) {
                             diffX = calDiffX(-calAbs(diffX), -calAbs(diffY)) + 50;
                             diffY = calDiffY(-calAbs(diffX), -calAbs(diffY)) + 50;
                         }
@@ -140,6 +140,7 @@ Ball.prototype = {
     init: function () {
         // this.drawABall(ctx, 200, 100, 10, "#ff5656");
         this.runningBall();
+        this.randomBall();
     },
 
     // 设置x轴的速度
@@ -165,6 +166,12 @@ Ball.prototype = {
         ctx.closePath();
         ctx.stroke();
         ctx.fill();
+    },
+
+    randomBall: function() {
+    	for(var i = 0; i < 100; i++) {
+    		this.drawABall(Math.random()*1024, Math.random()*640, 2, "#fff");
+    	}
     },
 
     runningBall: function () {

@@ -36,14 +36,18 @@ var DragDrop = function () {
 
             case "touchmove":
                 if (dragging !== null) {
+                    var tempX, tempY;
                     // 指定位置
-                    diffX = event.touches[0].clientX - target.parentNode.offsetLeft - 50;
-                    diffY = event.touches[0].clientY - target.parentNode.offsetTop - 50;
+                    tempX = event.touches[0].clientX - target.parentNode.offsetLeft - 50;
+                    tempY = event.touches[0].clientY - target.parentNode.offsetTop - 50;
                     // 如果超出圆形
-                    var distance = Math.sqrt(Math.pow(diffX, 2) + Math.pow(diffY, 2));
+                    var distance = Math.sqrt(Math.pow(tempX, 2) + Math.pow(tempY, 2));
                     if (distance >= 65) {
-                        diffX = calDiffX(diffX, diffY);
-                        diffY = calDiffY(diffX, diffY);
+                        diffX = calDiffX(tempX, tempY);
+                        diffY = calDiffY(tempX, tempY);
+                    } else {
+                        diffX = tempX;
+                        diffY = tempY;
                     }
                     dragging.style.left = diffX + 50 + 'px';
                     dragging.style.top = diffY + 50 + 'px';

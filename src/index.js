@@ -19,6 +19,15 @@ var DragDrop = function () {
         diffX = 0,
         diffY = 0;
 
+    // 计算diffX的值
+	function calDiffX(x, y) {
+	    return 65 * Math.cos(Math.atan2(y, x));
+	}
+	// 计算diffY的值
+	function calDiffY(x, y) {
+	    return 65 * Math.sin(Math.atan2(y, x));
+	}
+
     function handleEvent(e) {
 
         // 获取事件和对象
@@ -141,10 +150,10 @@ Ball.prototype = {
     },
 
     judgeEatAFood: function(foodX, foodY) {
-        if(foodX >= (this.x - this.r - 1) && foodX <= (this.x + this.r + 1) && foodY >= (this.y - this.r - 1) && foodY <= (this.y + this.r + 1)){
-        	return true;
-        }
-        return false;
+        return ((foodX - 2) >= (this.x - this.r) && (foodX - 2) <= (this.x + this.r)) && ((foodY - 2) >= (this.y - this.r) && (foodY - 2) <= (this.y + this.r)) ||
+        	   ((foodX + 2) >= (this.x - this.r) && (foodX + 2) <= (this.x + this.r)) && ((foodY - 2) >= (this.y - this.r) && (foodY - 2) <= (this.y + this.r)) ||
+        	   ((foodX - 2) >= (this.x - this.r) && (foodX - 2) <= (this.x + this.r)) && ((foodY + 2) >= (this.y - this.r) && (foodY + 2) <= (this.y + this.r)) ||
+        	   ((foodX + 2) >= (this.x - this.r) && (foodX + 2) <= (this.x + this.r)) && ((foodY + 2) >= (this.y - this.r) && (foodY + 2) <= (this.y + this.r))
     },
 
     runningBall: function () {
@@ -154,6 +163,7 @@ Ball.prototype = {
         this.y += this.speedY / this.speed;
         for(var i = 0; i < foodCoordinate.length; i++) {
         	if(this.judgeEatAFood(foodCoordinate[i]["x"], foodCoordinate[i]["y"])) {
+        		ctx.clearRect(foodCoordinate[i]["x"] - 2, foodCoordinate[i]["y"] - 2, 4, 4);
         		foodCoordinate.splice(i, 1);
         		this.r += 0.5;
         	}
@@ -172,7 +182,6 @@ Food.prototype = {
 	randomColor: ["#fff", "#ff9797", "#97eaff", "#97ffbe", "#f4ff97", "#ffb797"],
 
 	drawABall: function (x, y, r, bColor) {
-        // ctx.save();
         ctx.fillStyle = bColor;
         ctx.beginPath();
         ctx.arc(x, y, r, 0, Math.PI * 2);
@@ -191,14 +200,4 @@ Food.prototype = {
 			coordinate = {};
 		}
 	}
-}
-
-
-// 计算diffX的值
-function calDiffX(x, y) {
-    return 65 * Math.cos(Math.atan2(y, x));
-}
-// 计算diffY的值
-function calDiffY(x, y) {
-    return 65 * Math.sin(Math.atan2(y, x));
 }

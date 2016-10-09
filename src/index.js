@@ -1,5 +1,5 @@
 var canvas, ctx;
-var ball, food;
+var ball;
 var foodCoordinate = [];
 
 window.onload = function () {
@@ -7,10 +7,8 @@ window.onload = function () {
     if (canvas.getContext) {
         ctx = canvas.getContext("2d");
         ball = new Ball();
-        food = new Food();
     }
     DragDrop.enable();
-    // console.log(foodCoordinate);
 };
 
 var DragDrop = function () {
@@ -103,7 +101,7 @@ window.requestAnimFrame = (function () {
         window.webkitRequestAnimationFrame ||
         window.mozRequestAnimationFrame ||
         window.oRequestAnimationFrame ||
-        window.msRequestAnimationFrame
+        window.msRequestAnimationFrame;
 })();
 
 // 球球
@@ -119,9 +117,11 @@ function Ball() {
 
 Ball.prototype = {
 
+	randomColor: ["#fff", "#ff9797", "#97eaff", "#97ffbe", "#f4ff97", "#ffb797"],
+
     init: function () {
-        // this.drawABall(ctx, 200, 100, 10, "#ff5656");
         this.runningBall();
+        this.randomFood(100);
     },
 
     // 设置x轴的速度
@@ -153,7 +153,7 @@ Ball.prototype = {
         return ((foodX - 2) >= (this.x - this.r) && (foodX - 2) <= (this.x + this.r)) && ((foodY - 2) >= (this.y - this.r) && (foodY - 2) <= (this.y + this.r)) ||
         	   ((foodX + 2) >= (this.x - this.r) && (foodX + 2) <= (this.x + this.r)) && ((foodY - 2) >= (this.y - this.r) && (foodY - 2) <= (this.y + this.r)) ||
         	   ((foodX - 2) >= (this.x - this.r) && (foodX - 2) <= (this.x + this.r)) && ((foodY + 2) >= (this.y - this.r) && (foodY + 2) <= (this.y + this.r)) ||
-        	   ((foodX + 2) >= (this.x - this.r) && (foodX + 2) <= (this.x + this.r)) && ((foodY + 2) >= (this.y - this.r) && (foodY + 2) <= (this.y + this.r))
+        	   ((foodX + 2) >= (this.x - this.r) && (foodX + 2) <= (this.x + this.r)) && ((foodY + 2) >= (this.y - this.r) && (foodY + 2) <= (this.y + this.r));
     },
 
     runningBall: function () {
@@ -168,29 +168,15 @@ Ball.prototype = {
         		this.r += 0.5;
         	}
         }
+        if(foodCoordinate.length < 190) {
+        	this.randomFood(100);
+        }
+        // console.log(foodCoordinate.length);
         this.drawABall(this.x, this.y, this.r, "#ff5656");
         window.requestAnimationFrame(this.runningBall);
-    }
-};
-
-function Food() {
-	this.randomInit(100);
-}
-
-Food.prototype = {
-
-	randomColor: ["#fff", "#ff9797", "#97eaff", "#97ffbe", "#f4ff97", "#ffb797"],
-
-	drawABall: function (x, y, r, bColor) {
-        ctx.fillStyle = bColor;
-        ctx.beginPath();
-        ctx.arc(x, y, r, 0, Math.PI * 2);
-        ctx.closePath();
-        ctx.stroke();
-        ctx.fill();
     },
 
-	randomInit: function(len) {
+    randomFood: function(len) {
 		var coordinate = {};
 		for(var i = 0; i < len; i++) {
 			coordinate["x"] = parseInt(Math.random() * 1024);
@@ -200,4 +186,4 @@ Food.prototype = {
 			coordinate = {};
 		}
 	}
-}
+};

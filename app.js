@@ -6,9 +6,9 @@ var randomColor = ["#fff", "#ff9797", "#97eaff", "#97ffbe", "#f4ff97", "#ffb797"
 
 var players = [];
 
-app.use(express.static('dist'));
+app.use('/src', express.static('src'));
 app.get('/', function(req, res) {
-	res.sendfile('./dist/index.html');
+	res.sendfile('./index.html');
 });
 
 io.on('connection', function(socket){

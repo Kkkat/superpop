@@ -1,15 +1,16 @@
 var canvas, ctx;
-var ball;
+var ball, food;
+var foodCoordinate = [];
 
 window.onload = function () {
     canvas = document.getElementById("ball");
     if (canvas.getContext) {
         ctx = canvas.getContext("2d");
         ball = new Ball();
-        var food = new Food();
+        food = new Food();
     }
     DragDrop.enable();
-
+    // console.log(foodCoordinate);
 };
 
 var DragDrop = function () {
@@ -17,6 +18,15 @@ var DragDrop = function () {
     var dragging = null,
         diffX = 0,
         diffY = 0;
+
+    // 计算diffX的值
+    function calDiffX(x, y) {
+        return 65 * Math.cos(Math.atan2(y, x));
+    }
+    // 计算diffY的值
+    function calDiffY(x, y) {
+        return 65 * Math.sin(Math.atan2(y, x));
+    }
 
     function handleEvent(e) {
 
@@ -139,43 +149,55 @@ Ball.prototype = {
         ctx.fill();
     },
 
+    judgeEatAFood: function(foodX, foodY) {
+        if(foodX >= (this.x - this.r - 1) && foodX <= (this.x + this.r + 1) && foodY >= (this.y - this.r - 1) && foodY <= (this.y + this.r + 1)){
+        	return true;
+        }
+        return false;
+    },
+
     runningBall: function () {
         this.runningBall = this.runningBall.bind(this);
         ctx.clearRect(this.x - this.r - 1, this.y - this.r - 1, 2 * this.r + 2, 2 * this.r + 2);
         this.x += this.speedX / this.speed;
         this.y += this.speedY / this.speed;
+        for(var i = 0; i < foodCoordinate.length; i++) {
+        	if(this.judgeEatAFood(foodCoordinate[i]["x"], foodCoordinate[i]["y"])) {
+        		foodCoordinate.splice(i, 1);
+        		this.r += 0.5;
+        	}
+        }
         this.drawABall(this.x, this.y, this.r, "#ff5656");
         window.requestAnimationFrame(this.runningBall);
     }
 };
 
 function Food() {
-	// 随机颜色列表
-	this.color = ["#C71585", "#6A5ACD", "#7FFFD4", "#ADFF2F", "#F0E68C", "#FFFAFA"];
-	// 随机坐标
-	this.coordinate = [];
-	this.init();
+    this.randomInit(100);
 }
-
-// Food.prototype = new Ball();
 
 Food.prototype = {
-	init: function() {
-		this.randomBall();
-	},
 
-	randomBall: function() {
-	    for(var i = 0; i < 100; i++) {
-	    	ball.drawABall(Math.random()*1024, Math.random()*640, 2, "#fff");
-	    }
+	randomColor: ["#fff", "#ff9797", "#97eaff", "#97ffbe", "#f4ff97", "#ffb797"],
+
+	drawABall: function (x, y, r, bColor) {
+        // ctx.save();
+        ctx.fillStyle = bColor;
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.closePath();
+        ctx.stroke();
+        ctx.fill();
+    },
+
+	randomInit: function(len) {
+		var coordinate = {};
+		for(var i = 0; i < len; i++) {
+			coordinate["x"] = parseInt(Math.random() * 1024);
+			coordinate["y"] = parseInt(Math.random() * 640);
+			foodCoordinate.push(coordinate);
+			this.drawABall(coordinate["x"], coordinate["y"], 2, this.randomColor[parseInt(Math.random() * this.randomColor.length)]);
+			coordinate = {};
+		}
 	}
-}
-
-// 计算diffX的值
-function calDiffX(x, y) {
-    return 65 * Math.cos(Math.atan2(y, x));
-}
-// 计算diffY的值
-function calDiffY(x, y) {
-    return 65 * Math.sin(Math.atan2(y, x));
 }

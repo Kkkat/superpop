@@ -1,15 +1,34 @@
 var canvas, ctx;
-var ball;
+var ball, anotherball;
 var foodCoordinate = [];
 
-window.onload = function () {
-    canvas = document.getElementById("ball");
-    if (canvas.getContext) {
-        ctx = canvas.getContext("2d");
-        ball = new Ball();
-    }
-    DragDrop.enable();
-};
+// var socket = io();
+
+
+// 用户注册，创建自己的小球
+// socket.on("registe", function(player) {
+// 	ball = new Ball(player['x'], player['y'], player['r'], player['color']);
+// 	socket.emit("create");
+// });
+
+// socket.on("create", function(data) {
+// 	socket.emit("enter", data);
+// });
+
+// 其他玩家加入创建的球球
+// socket.on("join", function(player) {
+//    	anotherball = new Ball(player['x'], player['y'], player['r'], player['color']);
+// });
+
+// socket.on("update", function(player) {
+// 	console.log(player);
+// 	anotherball.r = player.r;
+// 	anotherball.x = player.x;
+// 	anotherball.y = player.y;
+// 	anotherball.speedX = player.speedX;
+// 	anotherball.speedY = player.speedY;
+// 	anotherball.speed = player.speed;
+// });
 
 var DragDrop = function () {
     var controlPanel = document.querySelector('.control-panel');
@@ -63,8 +82,10 @@ var DragDrop = function () {
                     // 设置默认值,防止小球突然消失
                     diffX = diffX ? diffX : 0;
                     diffY = diffY ? diffY : 0;
-                    ball.setSpeedX(diffX);
-                    ball.setSpeedY(diffY);
+                    // ball.setSpeedX(diffX);
+                    // ball.setSpeedY(diffY);
+                    Superpop.update();
+                    Superpop.draw();
                 }
                 break;
 
@@ -104,15 +125,283 @@ window.requestAnimFrame = (function () {
         window.msRequestAnimationFrame;
 })();
 
+window.Superpop = {};
+
+(function() {
+	function Rectangle(left, top, width, height) {
+		this.left = left || 0;
+		this.top = top || 0;
+		this.width = width || 0;
+		this.height = height || 0;
+		this.right = (this.left + this.width);
+		this.bottom  = (this.top + this.height);
+	}
+
+	Rectangle.prototype.set = function(left, top, width, height) {
+		this.left = left;
+		this.top = top;
+		this.width = width || this.width;
+		this.height = height || this.height;
+		this.right = this.left + this.width;
+		this.bottom = this.top + this.height;
+	}
+
+	Rectangle.prototype.within = function(r) {
+		return (r.left <= this.left &&
+				r.right >= this.right &&
+				r.top <= this.top &&
+				r.bottom >= this.bottom);
+	}
+
+	Rectangle.prototype.overlaps = function(r) {
+		return (this.left < r.right &&
+				r.left < this.right &&
+				this.top < r.bottom &&
+				r.top < this.bottom);
+	}
+
+	Superpop.Rectangle = Rectangle;
+})();
+
+(function() {
+
+	var AXIS = {
+		NONE: "none",
+		HORIZONTAL: "horizontal",
+		VERTICAL: "vertical",
+		BOTH: "both"
+	};
+
+	function Camera(xView, yView, canvasWidth, canvasHeight, worldWidth, worldHeight) {
+		this.xView = xView || 0;
+		this.yView = yView || 0;
+
+		this.xDeadZone = 0;
+		this.yDeadZone = 0;
+
+		this.wView = canvasWidth;
+		this.hView = canvasHeight;
+
+		this.axis = AXIS.BOTH;
+
+		this.followed = null;
+
+		this.viewportRect = new Superpop.Rectangle(this.xView, this.yView, this.wView, this.hView);
+
+		this.worldRect = new Superpop.Rectangle(0, 0, worldWidth, worldHeight);
+	}
+
+	Camera.prototype.follow = function(gameObject, xDeadZone, yDeadZone) {
+		this.followed = gameObject;
+		this.xDeadZone = xDeadZone;
+		this.yDeadZone = yDeadZone;
+	}
+
+	Camera.prototype.update = function() {
+		
+		if(this.followed != null) {
+
+			if(this.axis == AXIS.HORIZONTAL || this.axis == AXIS.BOTH) {
+
+				if(this.followed.x - this.xView + this.xDeadZone > this.wView)
+					this.yview = this.followed.y - (this.hview - this.yDeadZone);
+				else if(this.followed.x - this.xDeadZone < this.xView)
+					this.xView = this.followed.x - this.xDeadZone;
+
+			}
+
+			if(this.axis == AXIS.VERTICAL || this.axis == AXIS.BOTH) {
+
+				if(this.followed.y - this.yView + this.yDeadZone > this.hView)
+					this.yView = this.followed.y - (this.hView - this.yDeadZone);
+				else if(this.followed.y - this.yDeadZone < this.yView)
+					this.yView = this.followed.y - this.yDeadZone;
+			}
+		}
+
+		this.viewportRect.set(this.xView, this.yView);
+
+		if(!this.viewportRect.within(this.worldRect)) {
+
+			if(this.viewportRect.left < this.worldRect.left)
+				this.xView = this.worldRect.left;
+			if(this.viewportRect.top < this.worldRect.top)
+				this.yView = this.worldRect.top;
+			if(this.viewportRect.right > this.worldRect.right)
+				this.xView = this.worldRect.right - this.wView;
+			if(this.viewportRect.bottom > this.worldRect.bottom)
+				this.yView = this.worldRect.bottom - this.hView;
+		}
+	}
+
+	Superpop.Camera = Camera;
+})();
+
+(function() {
+
+	// 球球
+	function Player(x, y, r, bColor) {
+	    // this.init.apply(this, arguments);
+	    this.r = r;
+	    this.x = x;
+	    this.y = y;
+	    this.speedX = 0;
+	    this.speedY = 0;
+	    this.speed = 80;
+	    this.bColor = bColor;
+	    this.randomColor = ["#fff", "#ff9797", "#97eaff", "#97ffbe", "#f4ff97", "#ffb797"];
+	}
+
+	Player.prototype.update = function(speedX, speedY, worldWidth, worldHeight) {
+		this.speedX = speedX;
+		this.speedY = speedY;
+
+		this.x += this.speedX;
+		this.y += this.speedY;
+
+		if(this.x - this.r/2 < 0){
+			this.x = this.r/2;
+		}
+		if(this.y - this.r/2 < 0){
+			this.y = this.r/2;
+		}
+		if(this.x + this.r/2 > worldWidth){
+			this.x = worldWidth - this.width/2;
+		}
+		if(this.y + this.r/2 > worldHeight){
+			this.y = worldHeight - this.height/2;
+		}
+	}
+
+	Player.prototype.draw = function(context, xView, yView) {
+		context.save();
+		context.fillStyle = this.bColor;
+        // context.beginPath();
+        // context.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+        context.fillRect((this.x-this.r/2) - xView, (this.y-this.r/2) - yView, this.r, this.r);
+        // context.closePath();
+        // context.stroke();
+        context.fill();
+        context.restore();
+	}
+
+	Superpop.Player = Player;
+})();
+
+
+// map
+(function() {
+
+	function Map(width, height) {
+		this.width = width;
+		this.height = height;
+
+		this.image = null;
+	}
+
+	Map.prototype.generate = function() {
+		var ctx = document.createElement("canvas").getContext("2d");
+		ctx.canvas.width = this.width;
+		ctx.canvas.height = this.height;
+
+		ctx.save();
+		this.image = new Image();
+		this.image.src = "./src/img/bg.jpg";
+		ctx.drawImage(this.image, 0, 0, this.width, this.height);
+		ctx.restore();
+
+		this.image = new Image();
+		this.image.src = ctx.canvas.toDataURL("image/jpg");
+		// console.log(this.image.src);
+
+		ctx = null;
+	}
+
+	Map.prototype.draw = function(context, xView, yView) {
+		var sx, sy, dx, dy;
+		var sWidth, sHeight, dWidth, dHeight;
+
+		sx = xView;
+		sy = yView;
+
+		sWidth = context.canvas.width;
+		sHeight = context.canvas.height;
+
+		if(this.image.width - sx < sWidth) {
+			sWidth = this.image.width - sx;
+		}
+		if(this.image.height - sy < sHeight) {
+			sHeight = this.image.height - sy;
+		}
+
+		console.log(this.image.width + ":" + sx);
+
+		dx = 0;
+		dy = 0;
+
+		dWidth = sWidth;
+		dHeight = sHeight;
+
+		context.drawImage(this.image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
+	}
+
+	Superpop.Map = Map;
+})();
+
+(function() {
+
+	var canvas = document.getElementById("ball");
+	var context = canvas.getContext("2d");
+
+	var room = {
+		width: 5000,
+		height: 3000,
+		map: new Superpop.Map(5000, 3000)
+	};
+
+	room.map.generate();
+
+	var player = new Superpop.Player(50, 50, 50, "#97eaff");
+
+	var camera = new Superpop.Camera(0, 0, canvas.width, canvas.height, room.width, room.height);
+	camera.follow(player, canvas.width/2, canvas.height/2);
+
+	Superpop.update = function() {
+		player.update(4, 0, room.width, room.height);
+		camera.update();
+		// window.requestAnimationFrame(Superpop.update);
+	}
+
+	Superpop.draw = function() {
+		context.clearRect(0, 0, canvas.width, canvas.height);
+
+		room.map.draw(context, camera.xView, camera.yView);
+		player.draw(context, camera.xView, camera.yView);
+	}
+
+})();
+
+window.onload = function () {
+	// var name = prompt("please input your name", "");
+	// socket.emit("registe", name);
+ //    canvas = document.getElementById("ball");
+ //    if (canvas.getContext) {
+ //        ctx = canvas.getContext("2d");
+ //    }
+ 	Superpop.draw();
+    DragDrop.enable();
+};
+
 // 球球
-function Ball() {
+function Ball(x, y, r, bColor) {
     this.init.apply(this, arguments);
-    this.r = 10;
-    this.x = 200;
-    this.y = 200;
+    this.r = r;
+    this.x = x;
+    this.y = y;
     this.speedX = 0;
     this.speedY = 0;
     this.speed = 80;
+    this.bColor = bColor;
 }
 
 Ball.prototype = {
@@ -149,6 +438,7 @@ Ball.prototype = {
         ctx.fill();
     },
 
+    // 判断是否吃到食物
     judgeEatAFood: function(foodX, foodY) {
         return ((foodX - 2) >= (this.x - this.r) && (foodX - 2) <= (this.x + this.r)) && ((foodY - 2) >= (this.y - this.r) && (foodY - 2) <= (this.y + this.r)) ||
         	   ((foodX + 2) >= (this.x - this.r) && (foodX + 2) <= (this.x + this.r)) && ((foodY - 2) >= (this.y - this.r) && (foodY - 2) <= (this.y + this.r)) ||
@@ -172,7 +462,8 @@ Ball.prototype = {
         	this.randomFood(100);
         }
         // console.log(foodCoordinate.length);
-        this.drawABall(this.x, this.y, this.r, "#ff5656");
+        this.drawABall(this.x, this.y, this.r, this.bColor);
+        socket.emit('update', ball);
         window.requestAnimationFrame(this.runningBall);
     },
 
@@ -187,3 +478,4 @@ Ball.prototype = {
 		}
 	}
 };
+

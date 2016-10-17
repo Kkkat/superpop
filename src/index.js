@@ -206,7 +206,7 @@ window.Superpop = {};
 			if(this.axis == AXIS.HORIZONTAL || this.axis == AXIS.BOTH) {
 
 				if(this.followed.x - this.xView + this.xDeadZone > this.wView)
-					this.yview = this.followed.y - (this.hview - this.yDeadZone);
+					this.xView = this.followed.x - (this.wView - this.xDeadZone);
 				else if(this.followed.x - this.xDeadZone < this.xView)
 					this.xView = this.followed.x - this.xDeadZone;
 
@@ -268,21 +268,21 @@ window.Superpop = {};
 			this.y = this.r/2;
 		}
 		if(this.x + this.r/2 > worldWidth){
-			this.x = worldWidth - this.width/2;
+			this.x = worldWidth - this.r/2;
 		}
 		if(this.y + this.r/2 > worldHeight){
-			this.y = worldHeight - this.height/2;
+			this.y = worldHeight - this.r/2;
 		}
 	}
 
 	Player.prototype.draw = function(context, xView, yView) {
 		context.save();
 		context.fillStyle = this.bColor;
-        // context.beginPath();
-        // context.arc(this.x, this.y, this.r, 0, Math.PI * 2);
-        context.fillRect((this.x-this.r/2) - xView, (this.y-this.r/2) - yView, this.r, this.r);
-        // context.closePath();
-        // context.stroke();
+        context.beginPath();
+        context.arc(this.x - xView, this.y - yView, this.r, 0, Math.PI * 2);
+        // context.fillRect((this.x-this.r/2) - xView, (this.y-this.r/2) - yView, this.r, this.r);
+        context.closePath();
+        context.stroke();
         context.fill();
         context.restore();
 	}
@@ -305,18 +305,20 @@ window.Superpop = {};
 		var ctx = document.createElement("canvas").getContext("2d");
 		ctx.canvas.width = this.width;
 		ctx.canvas.height = this.height;
+		var _this = this;
 
-		ctx.save();
-		this.image = new Image();
-		this.image.src = "./src/img/bg.jpg";
-		ctx.drawImage(this.image, 0, 0, this.width, this.height);
-		ctx.restore();
+		
+		var img = new Image();
+		img.onload = function() {
+			ctx.drawImage(img, 0, 0, this.width, this.height);
 
-		this.image = new Image();
-		this.image.src = ctx.canvas.toDataURL("image/jpg");
-		// console.log(this.image.src);
+			_this.image = new Image();
+			_this.image.src = ctx.canvas.toDataURL("image/jpg");
 
-		ctx = null;
+			ctx = null;
+		}
+		img.src = "./src/img/bg.jpg";
+		
 	}
 
 	Map.prototype.draw = function(context, xView, yView) {
@@ -336,8 +338,6 @@ window.Superpop = {};
 			sHeight = this.image.height - sy;
 		}
 
-		console.log(this.image.width + ":" + sx);
-
 		dx = 0;
 		dy = 0;
 
@@ -356,20 +356,20 @@ window.Superpop = {};
 	var context = canvas.getContext("2d");
 
 	var room = {
-		width: 5000,
-		height: 3000,
-		map: new Superpop.Map(5000, 3000)
+		width: 1024,
+		height: 640,
+		map: new Superpop.Map(1024, 640)
 	};
 
 	room.map.generate();
 
-	var player = new Superpop.Player(50, 50, 50, "#97eaff");
+	var player = new Superpop.Player(50, 50, 10, "#97eaff");
 
 	var camera = new Superpop.Camera(0, 0, canvas.width, canvas.height, room.width, room.height);
 	camera.follow(player, canvas.width/2, canvas.height/2);
 
 	Superpop.update = function() {
-		player.update(4, 0, room.width, room.height);
+		player.update(4, 4, room.width, room.height);
 		camera.update();
 		// window.requestAnimationFrame(Superpop.update);
 	}
@@ -382,6 +382,7 @@ window.Superpop = {};
 	}
 
 })();
+
 
 window.onload = function () {
 	// var name = prompt("please input your name", "");

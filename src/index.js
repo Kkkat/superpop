@@ -168,8 +168,6 @@ window.Superpop = {};
 	}
 
 	Player.prototype.update = function(worldWidth, worldHeight) {
-		// this.speedX = speedX;
-		// this.speedY = speedY;
 
 		this.x += this.speedX / this.speed;
         this.y += this.speedY / this.speed;
@@ -201,6 +199,13 @@ window.Superpop = {};
         context.restore();
 	}
 
+	Player.prototype.judgeEatAFood = function(foodX, foodY) {
+        return ((foodX - 2) >= (this.x - this.r) && (foodX - 2) <= (this.x + this.r)) && ((foodY - 2) >= (this.y - this.r) && (foodY - 2) <= (this.y + this.r)) ||
+        	   ((foodX + 2) >= (this.x - this.r) && (foodX + 2) <= (this.x + this.r)) && ((foodY - 2) >= (this.y - this.r) && (foodY - 2) <= (this.y + this.r)) ||
+        	   ((foodX - 2) >= (this.x - this.r) && (foodX - 2) <= (this.x + this.r)) && ((foodY + 2) >= (this.y - this.r) && (foodY + 2) <= (this.y + this.r)) ||
+        	   ((foodX + 2) >= (this.x - this.r) && (foodX + 2) <= (this.x + this.r)) && ((foodY + 2) >= (this.y - this.r) && (foodY + 2) <= (this.y + this.r));
+    }
+
 	Superpop.Player = Player;
 })();
 
@@ -213,6 +218,7 @@ window.Superpop = {};
 		this.height = height;
 
 		this.image = null;
+		this.randomColor = ["#fff", "#ff9797", "#97eaff", "#97ffbe", "#f4ff97", "#ffb797"];
 	}
 
 	Map.prototype.generate = function() {
@@ -225,6 +231,7 @@ window.Superpop = {};
 		var img = new Image();
 		img.onload = function() {
 			ctx.drawImage(img, 0, 0, this.width, this.height);
+			_this.food(ctx, foodCoordinate.length);
 
 			_this.image = new Image();
 			_this.image.src = ctx.canvas.toDataURL("image/jpg");
@@ -232,6 +239,7 @@ window.Superpop = {};
 			ctx = null;
 		}
 		img.src = "./src/img/bg.jpg";
+
 	}
 
 	Map.prototype.draw = function(context, xView, yView) {
@@ -258,6 +266,23 @@ window.Superpop = {};
 		dHeight = sHeight;
 
 		context.drawImage(this.image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
+		// context.arc(100, 100, 20, 0, Math.PI * 2);
+		// this.food(context, 100);
+	}
+
+	Map.prototype.food = function(context, len) {
+		
+		for(var i = 0; i < len; i++) {
+			context.save();
+			context.fillStyle = foodCoordinate[i]["color"];
+	        context.beginPath();
+	        context.arc(foodCoordinate[i]["x"], foodCoordinate[i]["y"], 2, 0, Math.PI * 2);
+	        context.closePath();
+	        context.stroke();
+	        context.fill();
+			context.restore();
+		}
+		// console.log(foodCoordinate);
 	}
 
 	Superpop.Map = Map;
@@ -273,8 +298,18 @@ window.Superpop = {};
 		height: 640,
 		map: new Superpop.Map(1024, 640)
 	};
+	var coordinate = {};
+	var randomColor = ["#fff", "#ff9797", "#97eaff", "#97ffbe", "#f4ff97", "#ffb797"];
+	for(var i = 0; i < 100; i++) {
+		coordinate["x"] = parseInt(Math.random() * room.width);
+		coordinate["y"] = parseInt(Math.random() * room.height);
+		coordinate["color"] = randomColor[parseInt(Math.random() * randomColor.length)]
+		foodCoordinate.push(coordinate);
+		coordinate = {};
+	}
 
 	room.map.generate();
+
 
 	player = new Superpop.Player(50, 50, 10, "#97eaff");
 
@@ -288,15 +323,28 @@ window.Superpop = {};
 
 	var draw = function() {
 		context.clearRect(0, 0, canvas.width, canvas.height);
+		
+		// foodCoordinate.splice(0, 1);
 
 		room.map.draw(context, camera.xView, camera.yView);
 		player.draw(context, camera.xView, camera.yView);
+		// console.log(player.x);
+		// room.map.generate();
+
+		for(var i = 0; i < foodCoordinate.length; i++) {
+			if(player.judgeEatAFood(foodCoordinate[i]["x"], foodCoordinate[i]["y"])) {
+				foodCoordinate.splice(i, 1);
+				room.map.generate();
+				player.r += 0.5;
+			}
+		}
+		
 	}
 
 	Superpop.gameLoop = function() {
 		update();
 		draw();
-		window.requestAnimationFrame(Superpop.gameLoop);
+		window.requestAnimationFrame(arguments.callee);
 	}
 
 })();
@@ -356,11 +404,9 @@ var DragDrop = function () {
                     diffX = diffX ? diffX : 0;
                     diffY = diffY ? diffY : 0;
                     // ball.setSpeedX(diffX);
-                    // ball.setSpeedY(diffY);\
+                    // ball.setSpeedY(diffY);
                     player.speedX = diffX;
                     player.speedY = diffY;
-                    // Superpop.update(diffX, diffY);
-                    // Superpop.draw();
                 }
                 break;
 
@@ -472,7 +518,6 @@ Ball.prototype = {
         if(foodCoordinate.length < 190) {
         	this.randomFood(100);
         }
-        // console.log(foodCoordinate.length);
         this.drawABall(this.x, this.y, this.r, this.bColor);
         socket.emit('update', ball);
         window.requestAnimationFrame(this.runningBall);

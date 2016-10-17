@@ -1,6 +1,7 @@
 var canvas, ctx;
 var ball, anotherball;
 var foodCoordinate = [];
+var player;
 
 // var socket = io();
 
@@ -30,93 +31,6 @@ var foodCoordinate = [];
 // 	anotherball.speed = player.speed;
 // });
 
-var DragDrop = function () {
-    var controlPanel = document.querySelector('.control-panel');
-    var dragging = null,
-        diffX = 0,
-        diffY = 0;
-
-    // 计算diffX的值
-	function calDiffX(x, y) {
-	    return 65 * Math.cos(Math.atan2(y, x));
-	}
-	// 计算diffY的值
-	function calDiffY(x, y) {
-	    return 65 * Math.sin(Math.atan2(y, x));
-	}
-
-    function handleEvent(e) {
-
-        // 获取事件和对象
-        var event = e ? e : window.event;
-        var target = e.target || e.srcElement;
-
-        // 确定事件类型
-        switch (event.type) {
-            case "touchstart":
-                e.preventDefault();
-                if (target.className.indexOf("draggable") !== -1) {
-                    dragging = target;
-                } else {
-                    return;
-                }
-                break;
-
-            case "touchmove":
-                if (dragging !== null) {
-                    var tempX, tempY;
-                    // 指定位置
-
-                    tempX = event.touches[0].clientX - target.parentNode.offsetLeft - 50;
-                    tempY = event.touches[0].clientY - target.parentNode.offsetTop - 50;
-                    // 如果超出圆形
-                    var distance = Math.sqrt(Math.pow(tempX, 2) + Math.pow(tempY, 2));
-                    if (distance >= 65) {
-                        diffX = calDiffX(tempX, tempY);
-                        diffY = calDiffY(tempX, tempY);
-                    } else {
-                        diffX = tempX;
-                        diffY = tempY;
-                    }
-
-                    dragging.style.left = diffX + 50 + 'px';
-                    dragging.style.top = diffY + 50 + 'px';
-                    // 设置默认值,防止小球突然消失
-                    diffX = diffX ? diffX : 0;
-                    diffY = diffY ? diffY : 0;
-                    // ball.setSpeedX(diffX);
-                    // ball.setSpeedY(diffY);
-                    Superpop.update();
-                    Superpop.draw();
-                }
-                break;
-
-            case "touchend":
-                if (dragging === null) {
-                    return;
-                }
-                dragging.style.left = "50%";
-                dragging.style.top = "50%";
-                dragging = null;
-                break;
-        }
-    };
-
-    return {
-        enable: function () {
-            controlPanel.addEventListener("touchstart", handleEvent);
-            controlPanel.addEventListener("touchmove", handleEvent);
-            controlPanel.addEventListener("touchend", handleEvent);
-        },
-
-        disable: function () {
-            controlPanel.removeEventListener("touchstart", handleEvent);
-            controlPanel.removeEventListener("touchmove", handleEvent);
-            controlPanel.removeEventListener("touchend", handleEvent);
-        }
-    }
-
-}();
 
 // requestAnim
 window.requestAnimFrame = (function () {
@@ -243,23 +157,22 @@ window.Superpop = {};
 
 	// 球球
 	function Player(x, y, r, bColor) {
-	    // this.init.apply(this, arguments);
 	    this.r = r;
 	    this.x = x;
 	    this.y = y;
 	    this.speedX = 0;
 	    this.speedY = 0;
-	    this.speed = 80;
+	    this.speed = 60;
 	    this.bColor = bColor;
 	    this.randomColor = ["#fff", "#ff9797", "#97eaff", "#97ffbe", "#f4ff97", "#ffb797"];
 	}
 
-	Player.prototype.update = function(speedX, speedY, worldWidth, worldHeight) {
-		this.speedX = speedX;
-		this.speedY = speedY;
+	Player.prototype.update = function(worldWidth, worldHeight) {
+		// this.speedX = speedX;
+		// this.speedY = speedY;
 
-		this.x += this.speedX;
-		this.y += this.speedY;
+		this.x += this.speedX / this.speed;
+        this.y += this.speedY / this.speed;
 
 		if(this.x - this.r/2 < 0){
 			this.x = this.r/2;
@@ -273,6 +186,7 @@ window.Superpop = {};
 		if(this.y + this.r/2 > worldHeight){
 			this.y = worldHeight - this.r/2;
 		}
+
 	}
 
 	Player.prototype.draw = function(context, xView, yView) {
@@ -318,7 +232,6 @@ window.Superpop = {};
 			ctx = null;
 		}
 		img.src = "./src/img/bg.jpg";
-		
 	}
 
 	Map.prototype.draw = function(context, xView, yView) {
@@ -363,25 +276,120 @@ window.Superpop = {};
 
 	room.map.generate();
 
-	var player = new Superpop.Player(50, 50, 10, "#97eaff");
+	player = new Superpop.Player(50, 50, 10, "#97eaff");
 
 	var camera = new Superpop.Camera(0, 0, canvas.width, canvas.height, room.width, room.height);
 	camera.follow(player, canvas.width/2, canvas.height/2);
 
-	Superpop.update = function() {
-		player.update(4, 4, room.width, room.height);
+	var update = function() {
+		player.update(room.width, room.height);
 		camera.update();
-		// window.requestAnimationFrame(Superpop.update);
 	}
 
-	Superpop.draw = function() {
+	var draw = function() {
 		context.clearRect(0, 0, canvas.width, canvas.height);
 
 		room.map.draw(context, camera.xView, camera.yView);
 		player.draw(context, camera.xView, camera.yView);
 	}
 
+	Superpop.gameLoop = function() {
+		update();
+		draw();
+		window.requestAnimationFrame(Superpop.gameLoop);
+	}
+
 })();
+
+var DragDrop = function () {
+    var controlPanel = document.querySelector('.control-panel');
+    var dragging = null,
+        diffX = 0,
+        diffY = 0;
+
+    // 计算diffX的值
+	function calDiffX(x, y) {
+	    return 65 * Math.cos(Math.atan2(y, x));
+	}
+	// 计算diffY的值
+	function calDiffY(x, y) {
+	    return 65 * Math.sin(Math.atan2(y, x));
+	}
+
+    function handleEvent(e) {
+
+        // 获取事件和对象
+        var event = e ? e : window.event;
+        var target = e.target || e.srcElement;
+
+        // 确定事件类型
+        switch (event.type) {
+            case "touchstart":
+                e.preventDefault();
+                if (target.className.indexOf("draggable") !== -1) {
+                    dragging = target;
+                } else {
+                    return;
+                }
+                break;
+
+            case "touchmove":
+                if (dragging !== null) {
+                    var tempX, tempY;
+                    // 指定位置
+
+                    tempX = event.touches[0].clientX - target.parentNode.offsetLeft - 50;
+                    tempY = event.touches[0].clientY - target.parentNode.offsetTop - 50;
+                    // 如果超出圆形
+                    var distance = Math.sqrt(Math.pow(tempX, 2) + Math.pow(tempY, 2));
+                    if (distance >= 65) {
+                        diffX = calDiffX(tempX, tempY);
+                        diffY = calDiffY(tempX, tempY);
+                    } else {
+                        diffX = tempX;
+                        diffY = tempY;
+                    }
+
+                    dragging.style.left = diffX + 50 + 'px';
+                    dragging.style.top = diffY + 50 + 'px';
+                    // 设置默认值,防止小球突然消失
+                    diffX = diffX ? diffX : 0;
+                    diffY = diffY ? diffY : 0;
+                    // ball.setSpeedX(diffX);
+                    // ball.setSpeedY(diffY);\
+                    player.speedX = diffX;
+                    player.speedY = diffY;
+                    // Superpop.update(diffX, diffY);
+                    // Superpop.draw();
+                }
+                break;
+
+            case "touchend":
+                if (dragging === null) {
+                    return;
+                }
+                dragging.style.left = "50%";
+                dragging.style.top = "50%";
+                dragging = null;
+                break;
+        }
+    };
+
+    return {
+        enable: function () {
+            controlPanel.addEventListener("touchstart", handleEvent);
+            controlPanel.addEventListener("touchmove", handleEvent);
+            controlPanel.addEventListener("touchend", handleEvent);
+        },
+
+        disable: function () {
+            controlPanel.removeEventListener("touchstart", handleEvent);
+            controlPanel.removeEventListener("touchmove", handleEvent);
+            controlPanel.removeEventListener("touchend", handleEvent);
+        }
+    }
+
+}();
 
 
 window.onload = function () {
@@ -391,7 +399,7 @@ window.onload = function () {
  //    if (canvas.getContext) {
  //        ctx = canvas.getContext("2d");
  //    }
- 	Superpop.draw();
+ 	Superpop.gameLoop();
     DragDrop.enable();
 };
 

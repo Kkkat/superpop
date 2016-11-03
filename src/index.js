@@ -114,7 +114,7 @@ window.Superpop = {};
 	}
 
 	Camera.prototype.update = function() {
-		
+
 		if(this.followed != null) {
 
 			if(this.axis == AXIS.HORIZONTAL || this.axis == AXIS.BOTH) {
@@ -227,7 +227,7 @@ window.Superpop = {};
 		ctx.canvas.height = this.height;
 		var _this = this;
 
-		
+
 		var img = new Image();
 		img.onload = function() {
 			ctx.drawImage(img, 0, 0, this.width, this.height);
@@ -271,7 +271,7 @@ window.Superpop = {};
 	}
 
 	Map.prototype.food = function(context, len) {
-		
+
 		for(var i = 0; i < len; i++) {
 			context.save();
 			context.fillStyle = foodCoordinate[i]["color"];
@@ -323,7 +323,7 @@ window.Superpop = {};
 
 	var draw = function() {
 		context.clearRect(0, 0, canvas.width, canvas.height);
-		
+
 		// foodCoordinate.splice(0, 1);
 
 		room.map.draw(context, camera.xView, camera.yView);
@@ -338,7 +338,7 @@ window.Superpop = {};
 				player.r += 0.5;
 			}
 		}
-		
+
 	}
 
 	Superpop.gameLoop = function() {

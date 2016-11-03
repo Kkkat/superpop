@@ -82,10 +82,10 @@ window.Superpop = {};
 (function () {
 
     var AXIS = {
-        NONE: "none",
-        HORIZONTAL: "horizontal",
-        VERTICAL: "vertical",
-        BOTH: "both"
+        NONE: 'none',
+        HORIZONTAL: 'horizontal',
+        VERTICAL: 'vertical',
+        BOTH: 'both'
     };
 
     function Camera(xView, yView, canvasWidth, canvasHeight, worldWidth, worldHeight) {
@@ -115,9 +115,9 @@ window.Superpop = {};
 
     Camera.prototype.update = function () {
 
-        if (this.followed != null) {
+        if (this.followed !== null) {
 
-            if (this.axis == AXIS.HORIZONTAL || this.axis == AXIS.BOTH) {
+            if (this.axis === AXIS.HORIZONTAL || this.axis === AXIS.BOTH) {
 
                 if (this.followed.x - this.xView + this.xDeadZone > this.wView) {
                     this.xView = this.followed.x - (this.wView - this.xDeadZone);
@@ -127,7 +127,7 @@ window.Superpop = {};
                 }
             }
 
-            if (this.axis == AXIS.VERTICAL || this.axis == AXIS.BOTH) {
+            if (this.axis === AXIS.VERTICAL || this.axis === AXIS.BOTH) {
 
                 if (this.followed.y - this.yView + this.yDeadZone > this.hView) {
                     this.yView = this.followed.y - (this.hView - this.yDeadZone);
@@ -142,14 +142,18 @@ window.Superpop = {};
 
         if (!this.viewportRect.within(this.worldRect)) {
 
-            if (this.viewportRect.left < this.worldRect.left)
+            if (this.viewportRect.left < this.worldRect.left) {
                 this.xView = this.worldRect.left;
-            if (this.viewportRect.top < this.worldRect.top)
+            }
+            if (this.viewportRect.top < this.worldRect.top) {
                 this.yView = this.worldRect.top;
-            if (this.viewportRect.right > this.worldRect.right)
+            }
+            if (this.viewportRect.right > this.worldRect.right) {
                 this.xView = this.worldRect.right - this.wView;
-            if (this.viewportRect.bottom > this.worldRect.bottom)
+            }
+            if (this.viewportRect.bottom > this.worldRect.bottom) {
                 this.yView = this.worldRect.bottom - this.hView;
+            }
         }
     };
 
@@ -167,7 +171,7 @@ window.Superpop = {};
         this.speedY = 0;
         this.speed = 60;
         this.bColor = bColor;
-        this.randomColor = ["#fff", "#ff9797", "#97eaff", "#97ffbe", "#f4ff97", "#ffb797"];
+        this.randomColor = ['#fff', '#ff9797', '#97eaff', '#97ffbe', '#f4ff97', '#ffb797'];
     }
 
     Player.prototype.update = function (worldWidth, worldHeight) {
@@ -221,11 +225,11 @@ window.Superpop = {};
         this.height = height;
 
         this.image = null;
-        this.randomColor = ["#fff", "#ff9797", "#97eaff", "#97ffbe", "#f4ff97", "#ffb797"];
+        this.randomColor = ['#fff', '#ff9797', '#97eaff', '#97ffbe', '#f4ff97', '#ffb797'];
     }
 
     Map.prototype.generate = function () {
-        var ctx = document.createElement("canvas").getContext("2d");
+        var ctx = document.createElement('canvas').getContext('2d');
         ctx.canvas.width = this.width;
         ctx.canvas.height = this.height;
         var _this = this;
@@ -233,14 +237,14 @@ window.Superpop = {};
 
         var img = new Image();
         img.onload = function () {
-            ctx.drawImage(img, 0, 0, this.width, this.height);
+            ctx.drawImage(img, 0, 0, _this.width, _this.height);
             _this.food(ctx, foodCoordinate.length);
 
             _this.image = new Image();
-            _this.image.src = ctx.canvas.toDataURL("image/jpg");
+            _this.image.src = ctx.canvas.toDataURL('image/jpg');
 
             ctx = null;
-        }
+        };
         img.src = "./src/img/bg.jpg";
 
     };
@@ -275,11 +279,11 @@ window.Superpop = {};
 
     Map.prototype.food = function (context, len) {
 
-        for (var i = 0; i < len; i++) {
+        for (var i = 0; i < len; i += 1) {
             context.save();
-            context.fillStyle = foodCoordinate[i]["color"];
+            context.fillStyle = foodCoordinate[i].color;
             context.beginPath();
-            context.arc(foodCoordinate[i]["x"], foodCoordinate[i]["y"], 2, 0, Math.PI * 2);
+            context.arc(foodCoordinate[i].x, foodCoordinate[i].y, 2, 0, Math.PI * 2);
             context.closePath();
             context.stroke();
             context.fill();
@@ -293,8 +297,8 @@ window.Superpop = {};
 
 (function () {
 
-    var canvas = document.getElementById("ball");
-    var context = canvas.getContext("2d");
+    var canvas = document.getElementById('ball');
+    var context = canvas.getContext('2d');
 
     var room = {
         width: 1024,
@@ -302,11 +306,11 @@ window.Superpop = {};
         map: new Superpop.Map(1024, 640)
     };
     var coordinate = {};
-    var randomColor = ["#fff", "#ff9797", "#97eaff", "#97ffbe", "#f4ff97", "#ffb797"];
-    for (var i = 0; i < 100; i++) {
-        coordinate["x"] = parseInt(Math.random() * room.width);
-        coordinate["y"] = parseInt(Math.random() * room.height);
-        coordinate["color"] = randomColor[parseInt(Math.random() * randomColor.length)]
+    var randomColor = ['#fff', '#ff9797', '#97eaff', '#97ffbe', '#f4ff97', '#ffb797'];
+    for (var i = 0; i < 100; i += 1) {
+        coordinate.x = parseInt(Math.random() * room.width);
+        coordinate.y = parseInt(Math.random() * room.height);
+        coordinate.color = randomColor[parseInt(Math.random() * randomColor.length)]
         foodCoordinate.push(coordinate);
         coordinate = {};
     }
@@ -314,7 +318,7 @@ window.Superpop = {};
     room.map.generate();
 
 
-    player = new Superpop.Player(50, 50, 10, "#97eaff");
+    player = new Superpop.Player(50, 50, 10, '#97eaff');
 
     var camera = new Superpop.Camera(0, 0, canvas.width, canvas.height, room.width, room.height);
     camera.follow(player, canvas.width / 2, canvas.height / 2);
@@ -334,8 +338,8 @@ window.Superpop = {};
         // console.log(player.x);
         // room.map.generate();
 
-        for (var i = 0; i < foodCoordinate.length; i++) {
-            if (player.judgeEatAFood(foodCoordinate[i]["x"], foodCoordinate[i]["y"])) {
+        for (var i = 0; i < foodCoordinate.length; i += 1) {
+            if (player.judgeEatAFood(foodCoordinate[i].x, foodCoordinate[i].y)) {
                 foodCoordinate.splice(i, 1);
                 room.map.generate();
                 player.r += 0.5;
@@ -376,16 +380,16 @@ var DragDrop = function () {
 
         // 确定事件类型
         switch (event.type) {
-            case "touchstart":
+            case 'touchstart':
                 e.preventDefault();
-                if (target.className.indexOf("draggable") !== -1) {
+                if (target.className.indexOf('draggable') !== -1) {
                     dragging = target;
                 } else {
                     return;
                 }
                 break;
 
-            case "touchmove":
+            case 'touchmove':
                 if (dragging !== null) {
                     var tempX, tempY;
                     // 指定位置
@@ -414,12 +418,12 @@ var DragDrop = function () {
                 }
                 break;
 
-            case "touchend":
+            case 'touchend':
                 if (dragging === null) {
                     return;
                 }
-                dragging.style.left = "50%";
-                dragging.style.top = "50%";
+                dragging.style.left = '50%';
+                dragging.style.top = '50%';
                 dragging = null;
                 break;
         }
@@ -427,15 +431,15 @@ var DragDrop = function () {
 
     return {
         enable: function () {
-            controlPanel.addEventListener("touchstart", handleEvent);
-            controlPanel.addEventListener("touchmove", handleEvent);
-            controlPanel.addEventListener("touchend", handleEvent);
+            controlPanel.addEventListener('touchstart', handleEvent);
+            controlPanel.addEventListener('touchmove', handleEvent);
+            controlPanel.addEventListener('touchend', handleEvent);
         },
 
         disable: function () {
-            controlPanel.removeEventListener("touchstart", handleEvent);
-            controlPanel.removeEventListener("touchmove", handleEvent);
-            controlPanel.removeEventListener("touchend", handleEvent);
+            controlPanel.removeEventListener('touchstart', handleEvent);
+            controlPanel.removeEventListener('touchmove', handleEvent);
+            controlPanel.removeEventListener('touchend', handleEvent);
         }
     }
 
@@ -467,7 +471,7 @@ function Ball(x, y, r, bColor) {
 
 Ball.prototype = {
 
-    randomColor: ["#fff", "#ff9797", "#97eaff", "#97ffbe", "#f4ff97", "#ffb797"],
+    randomColor: ['#fff', '#ff9797', '#97eaff', '#97ffbe', '#f4ff97', '#ffb797'],
 
     init: function () {
         this.runningBall();
@@ -512,9 +516,9 @@ Ball.prototype = {
         ctx.clearRect(this.x - this.r - 1, this.y - this.r - 1, 2 * this.r + 2, 2 * this.r + 2);
         this.x += this.speedX / this.speed;
         this.y += this.speedY / this.speed;
-        for (var i = 0; i < foodCoordinate.length; i++) {
-            if (this.judgeEatAFood(foodCoordinate[i]["x"], foodCoordinate[i]["y"])) {
-                ctx.clearRect(foodCoordinate[i]["x"] - 2, foodCoordinate[i]["y"] - 2, 4, 4);
+        for (var i = 0; i < foodCoordinate.length; i += 1) {
+            if (this.judgeEatAFood(foodCoordinate[i].x, foodCoordinate[i].y)) {
+                ctx.clearRect(foodCoordinate[i].x - 2, foodCoordinate[i].y - 2, 4, 4);
                 foodCoordinate.splice(i, 1);
                 this.r += 0.5;
             }
@@ -534,7 +538,7 @@ function Food() {
 
 Food.prototype = {
 
-    randomColor: ["#fff", "#ff9797", "#97eaff", "#97ffbe", "#f4ff97", "#ffb797"],
+    randomColor: ['#fff', '#ff9797', '#97eaff', '#97ffbe', '#f4ff97', '#ffb797'],
 
     drawABall: function (x, y, r, bColor) {
         // ctx.save();
@@ -548,11 +552,11 @@ Food.prototype = {
 
     randomFood: function (len) {
         var coordinate = {};
-        for (var i = 0; i < len; i++) {
-            coordinate["x"] = parseInt(Math.random() * 1024);
-            coordinate["y"] = parseInt(Math.random() * 640);
+        for (var i = 0; i < len; i += 1) {
+            coordinate.x = parseInt(Math.random() * 1024);
+            coordinate.y = parseInt(Math.random() * 640);
             foodCoordinate.push(coordinate);
-            this.drawABall(coordinate["x"], coordinate["y"], 2, this.randomColor[parseInt(Math.random() * this.randomColor.length)]);
+            this.drawABall(coordinate.x, coordinate.y, 2, this.randomColor[parseInt(Math.random() * this.randomColor.length)]);
             coordinate = {};
         }
     }

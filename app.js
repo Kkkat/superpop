@@ -2,7 +2,7 @@ var express = require('express');
 var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
-var randomColor = ["#fff", "#ff9797", "#97eaff", "#97ffbe", "#f4ff97", "#ffb797"];
+var randomColor = ['#fff', '#ff9797', '#97eaff', '#97ffbe', '#f4ff97', '#ffb797'];
 
 var players = [];
 
@@ -15,12 +15,12 @@ io.on('connection', function (socket) {
     var player;
     socket.on('registe', function (name) {
         player = {
-            "id": socket.id,
-            "name": name,
-            "x": parseInt(Math.random() * 600),
-            "y": parseInt(Math.random() * 300),
-            "r": 10,
-            "color": randomColor[parseInt(Math.random() * randomColor.length)]
+            id: socket.id,
+            name: name,
+            x: parseInt(Math.random() * 600),
+            y: parseInt(Math.random() * 300),
+            r: 10,
+            color: randomColor[parseInt(Math.random() * randomColor.length)]
         };
 
         socket.emit('registe', player);
@@ -34,7 +34,7 @@ io.on('connection', function (socket) {
 
         io.sockets.emit('create', {
             room: roomInfo,
-            msg: "create successed",
+            msg: 'create successed',
             code: 1
         });
     });
@@ -51,7 +51,7 @@ io.on('connection', function (socket) {
 
     socket.on('disconnect', function (msg) {
         for (var i = 0; i < players.length; i++) {
-            if (socket.id == players[i]["id"]) {
+            if (socket.id == players[i].id) {
                 players.splice(i, 1);
             }
         }

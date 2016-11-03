@@ -3,26 +3,27 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <title>球球大作战</title>
     <link rel="stylesheet" type="text/css" href="src/reset.css">
     <link rel="stylesheet" type="text/css" href="src/index.css">
 </head>
 
 <body>
-    <div class="container">
-    	<div class="weight-panel">体重：<span class="weight">112</span>kg</div>
-    	<div class="control-panel">
-    		<i class="direction-control draggable" id="control-btn"></i>
-    	</div>
-    	<div class="division">
-    		<span></span>
-    	</div>
-		<canvas id="ball" width="667" height="375" />
+<div class="container">
+    <div class="weight-panel">体重：<span class="weight">112</span>kg</div>
+    <div class="control-panel">
+        <i class="direction-control draggable" id="control-btn"></i>
     </div>
+    <div class="division">
+        <span></span>
+    </div>
+    <canvas id="ball" width="667" height="375"/>
+</div>
 
-    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
-    <script src="src/index.js"></script>
+<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+<script src="src/index.js"></script>
 </body>
 
 </html>

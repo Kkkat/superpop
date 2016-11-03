@@ -43,153 +43,156 @@ window.requestAnimFrame = (function () {
 
 window.Superpop = {};
 
-(function() {
-	function Rectangle(left, top, width, height) {
-		this.left = left || 0;
-		this.top = top || 0;
-		this.width = width || 0;
-		this.height = height || 0;
-		this.right = (this.left + this.width);
-		this.bottom  = (this.top + this.height);
-	}
+(function () {
+    function Rectangle(left, top, width, height) {
+        this.left = left || 0;
+        this.top = top || 0;
+        this.width = width || 0;
+        this.height = height || 0;
+        this.right = this.left + this.width;
+        this.bottom = this.top + this.height;
+    }
 
-	Rectangle.prototype.set = function(left, top, width, height) {
-		this.left = left;
-		this.top = top;
-		this.width = width || this.width;
-		this.height = height || this.height;
-		this.right = this.left + this.width;
-		this.bottom = this.top + this.height;
-	}
+    Rectangle.prototype.set = function (left, top, width, height) {
+        this.left = left;
+        this.top = top;
+        this.width = width || this.width;
+        this.height = height || this.height;
+        this.right = this.left + this.width;
+        this.bottom = this.top + this.height;
+    };
 
-	Rectangle.prototype.within = function(r) {
-		return (r.left <= this.left &&
-				r.right >= this.right &&
-				r.top <= this.top &&
-				r.bottom >= this.bottom);
-	}
+    Rectangle.prototype.within = function (r) {
+        return (r.left <= this.left &&
+        r.right >= this.right &&
+        r.top <= this.top &&
+        r.bottom >= this.bottom);
+    };
 
-	Rectangle.prototype.overlaps = function(r) {
-		return (this.left < r.right &&
-				r.left < this.right &&
-				this.top < r.bottom &&
-				r.top < this.bottom);
-	}
+    Rectangle.prototype.overlaps = function (r) {
+        return (this.left < r.right &&
+        r.left < this.right &&
+        this.top < r.bottom &&
+        r.top < this.bottom);
+    };
 
-	Superpop.Rectangle = Rectangle;
+    Superpop.Rectangle = Rectangle;
 })();
 
-(function() {
+(function () {
 
-	var AXIS = {
-		NONE: "none",
-		HORIZONTAL: "horizontal",
-		VERTICAL: "vertical",
-		BOTH: "both"
-	};
+    var AXIS = {
+        NONE: "none",
+        HORIZONTAL: "horizontal",
+        VERTICAL: "vertical",
+        BOTH: "both"
+    };
 
-	function Camera(xView, yView, canvasWidth, canvasHeight, worldWidth, worldHeight) {
-		this.xView = xView || 0;
-		this.yView = yView || 0;
+    function Camera(xView, yView, canvasWidth, canvasHeight, worldWidth, worldHeight) {
+        this.xView = xView || 0;
+        this.yView = yView || 0;
 
-		this.xDeadZone = 0;
-		this.yDeadZone = 0;
+        this.xDeadZone = 0;
+        this.yDeadZone = 0;
 
-		this.wView = canvasWidth;
-		this.hView = canvasHeight;
+        this.wView = canvasWidth;
+        this.hView = canvasHeight;
 
-		this.axis = AXIS.BOTH;
+        this.axis = AXIS.BOTH;
 
-		this.followed = null;
+        this.followed = null;
 
-		this.viewportRect = new Superpop.Rectangle(this.xView, this.yView, this.wView, this.hView);
+        this.viewportRect = new Superpop.Rectangle(this.xView, this.yView, this.wView, this.hView);
 
-		this.worldRect = new Superpop.Rectangle(0, 0, worldWidth, worldHeight);
-	}
+        this.worldRect = new Superpop.Rectangle(0, 0, worldWidth, worldHeight);
+    }
 
-	Camera.prototype.follow = function(gameObject, xDeadZone, yDeadZone) {
-		this.followed = gameObject;
-		this.xDeadZone = xDeadZone;
-		this.yDeadZone = yDeadZone;
-	}
+    Camera.prototype.follow = function (gameObject, xDeadZone, yDeadZone) {
+        this.followed = gameObject;
+        this.xDeadZone = xDeadZone;
+        this.yDeadZone = yDeadZone;
+    };
 
-	Camera.prototype.update = function() {
+    Camera.prototype.update = function () {
 
-		if(this.followed != null) {
+        if (this.followed != null) {
 
-			if(this.axis == AXIS.HORIZONTAL || this.axis == AXIS.BOTH) {
+            if (this.axis == AXIS.HORIZONTAL || this.axis == AXIS.BOTH) {
 
-				if(this.followed.x - this.xView + this.xDeadZone > this.wView)
-					this.xView = this.followed.x - (this.wView - this.xDeadZone);
-				else if(this.followed.x - this.xDeadZone < this.xView)
-					this.xView = this.followed.x - this.xDeadZone;
+                if (this.followed.x - this.xView + this.xDeadZone > this.wView) {
+                    this.xView = this.followed.x - (this.wView - this.xDeadZone);
+                }
+                else if (this.followed.x - this.xDeadZone < this.xView) {
+                    this.xView = this.followed.x - this.xDeadZone;
+                }
+            }
 
-			}
+            if (this.axis == AXIS.VERTICAL || this.axis == AXIS.BOTH) {
 
-			if(this.axis == AXIS.VERTICAL || this.axis == AXIS.BOTH) {
+                if (this.followed.y - this.yView + this.yDeadZone > this.hView) {
+                    this.yView = this.followed.y - (this.hView - this.yDeadZone);
+                }
+                else if (this.followed.y - this.yDeadZone < this.yView) {
+                    this.yView = this.followed.y - this.yDeadZone;
+                }
+            }
+        }
 
-				if(this.followed.y - this.yView + this.yDeadZone > this.hView)
-					this.yView = this.followed.y - (this.hView - this.yDeadZone);
-				else if(this.followed.y - this.yDeadZone < this.yView)
-					this.yView = this.followed.y - this.yDeadZone;
-			}
-		}
+        this.viewportRect.set(this.xView, this.yView);
 
-		this.viewportRect.set(this.xView, this.yView);
+        if (!this.viewportRect.within(this.worldRect)) {
 
-		if(!this.viewportRect.within(this.worldRect)) {
+            if (this.viewportRect.left < this.worldRect.left)
+                this.xView = this.worldRect.left;
+            if (this.viewportRect.top < this.worldRect.top)
+                this.yView = this.worldRect.top;
+            if (this.viewportRect.right > this.worldRect.right)
+                this.xView = this.worldRect.right - this.wView;
+            if (this.viewportRect.bottom > this.worldRect.bottom)
+                this.yView = this.worldRect.bottom - this.hView;
+        }
+    };
 
-			if(this.viewportRect.left < this.worldRect.left)
-				this.xView = this.worldRect.left;
-			if(this.viewportRect.top < this.worldRect.top)
-				this.yView = this.worldRect.top;
-			if(this.viewportRect.right > this.worldRect.right)
-				this.xView = this.worldRect.right - this.wView;
-			if(this.viewportRect.bottom > this.worldRect.bottom)
-				this.yView = this.worldRect.bottom - this.hView;
-		}
-	}
-
-	Superpop.Camera = Camera;
+    Superpop.Camera = Camera;
 })();
 
-(function() {
+(function () {
 
-	// 球球
-	function Player(x, y, r, bColor) {
-	    this.r = r;
-	    this.x = x;
-	    this.y = y;
-	    this.speedX = 0;
-	    this.speedY = 0;
-	    this.speed = 60;
-	    this.bColor = bColor;
-	    this.randomColor = ["#fff", "#ff9797", "#97eaff", "#97ffbe", "#f4ff97", "#ffb797"];
-	}
+    // 球球
+    function Player(x, y, r, bColor) {
+        this.r = r;
+        this.x = x;
+        this.y = y;
+        this.speedX = 0;
+        this.speedY = 0;
+        this.speed = 60;
+        this.bColor = bColor;
+        this.randomColor = ["#fff", "#ff9797", "#97eaff", "#97ffbe", "#f4ff97", "#ffb797"];
+    }
 
-	Player.prototype.update = function(worldWidth, worldHeight) {
+    Player.prototype.update = function (worldWidth, worldHeight) {
 
-		this.x += this.speedX / this.speed;
+        this.x += this.speedX / this.speed;
         this.y += this.speedY / this.speed;
 
-		if(this.x - this.r/2 < 0){
-			this.x = this.r/2;
-		}
-		if(this.y - this.r/2 < 0){
-			this.y = this.r/2;
-		}
-		if(this.x + this.r/2 > worldWidth){
-			this.x = worldWidth - this.r/2;
-		}
-		if(this.y + this.r/2 > worldHeight){
-			this.y = worldHeight - this.r/2;
-		}
+        if (this.x - this.r / 2 < 0) {
+            this.x = this.r / 2;
+        }
+        if (this.y - this.r / 2 < 0) {
+            this.y = this.r / 2;
+        }
+        if (this.x + this.r / 2 > worldWidth) {
+            this.x = worldWidth - this.r / 2;
+        }
+        if (this.y + this.r / 2 > worldHeight) {
+            this.y = worldHeight - this.r / 2;
+        }
 
-	}
+    };
 
-	Player.prototype.draw = function(context, xView, yView) {
-		context.save();
-		context.fillStyle = this.bColor;
+    Player.prototype.draw = function (context, xView, yView) {
+        context.save();
+        context.fillStyle = this.bColor;
         context.beginPath();
         context.arc(this.x - xView, this.y - yView, this.r, 0, Math.PI * 2);
         // context.fillRect((this.x-this.r/2) - xView, (this.y-this.r/2) - yView, this.r, this.r);
@@ -197,155 +200,155 @@ window.Superpop = {};
         context.stroke();
         context.fill();
         context.restore();
-	}
+    };
 
-	Player.prototype.judgeEatAFood = function(foodX, foodY) {
+    Player.prototype.judgeEatAFood = function (foodX, foodY) {
         return ((foodX - 2) >= (this.x - this.r) && (foodX - 2) <= (this.x + this.r)) && ((foodY - 2) >= (this.y - this.r) && (foodY - 2) <= (this.y + this.r)) ||
-        	   ((foodX + 2) >= (this.x - this.r) && (foodX + 2) <= (this.x + this.r)) && ((foodY - 2) >= (this.y - this.r) && (foodY - 2) <= (this.y + this.r)) ||
-        	   ((foodX - 2) >= (this.x - this.r) && (foodX - 2) <= (this.x + this.r)) && ((foodY + 2) >= (this.y - this.r) && (foodY + 2) <= (this.y + this.r)) ||
-        	   ((foodX + 2) >= (this.x - this.r) && (foodX + 2) <= (this.x + this.r)) && ((foodY + 2) >= (this.y - this.r) && (foodY + 2) <= (this.y + this.r));
-    }
+            ((foodX + 2) >= (this.x - this.r) && (foodX + 2) <= (this.x + this.r)) && ((foodY - 2) >= (this.y - this.r) && (foodY - 2) <= (this.y + this.r)) ||
+            ((foodX - 2) >= (this.x - this.r) && (foodX - 2) <= (this.x + this.r)) && ((foodY + 2) >= (this.y - this.r) && (foodY + 2) <= (this.y + this.r)) ||
+            ((foodX + 2) >= (this.x - this.r) && (foodX + 2) <= (this.x + this.r)) && ((foodY + 2) >= (this.y - this.r) && (foodY + 2) <= (this.y + this.r));
+    };
 
-	Superpop.Player = Player;
+    Superpop.Player = Player;
 })();
 
 
 // map
-(function() {
+(function () {
 
-	function Map(width, height) {
-		this.width = width;
-		this.height = height;
+    function Map(width, height) {
+        this.width = width;
+        this.height = height;
 
-		this.image = null;
-		this.randomColor = ["#fff", "#ff9797", "#97eaff", "#97ffbe", "#f4ff97", "#ffb797"];
-	}
+        this.image = null;
+        this.randomColor = ["#fff", "#ff9797", "#97eaff", "#97ffbe", "#f4ff97", "#ffb797"];
+    }
 
-	Map.prototype.generate = function() {
-		var ctx = document.createElement("canvas").getContext("2d");
-		ctx.canvas.width = this.width;
-		ctx.canvas.height = this.height;
-		var _this = this;
+    Map.prototype.generate = function () {
+        var ctx = document.createElement("canvas").getContext("2d");
+        ctx.canvas.width = this.width;
+        ctx.canvas.height = this.height;
+        var _this = this;
 
 
-		var img = new Image();
-		img.onload = function() {
-			ctx.drawImage(img, 0, 0, this.width, this.height);
-			_this.food(ctx, foodCoordinate.length);
+        var img = new Image();
+        img.onload = function () {
+            ctx.drawImage(img, 0, 0, this.width, this.height);
+            _this.food(ctx, foodCoordinate.length);
 
-			_this.image = new Image();
-			_this.image.src = ctx.canvas.toDataURL("image/jpg");
+            _this.image = new Image();
+            _this.image.src = ctx.canvas.toDataURL("image/jpg");
 
-			ctx = null;
-		}
-		img.src = "./src/img/bg.jpg";
+            ctx = null;
+        }
+        img.src = "./src/img/bg.jpg";
 
-	}
+    };
 
-	Map.prototype.draw = function(context, xView, yView) {
-		var sx, sy, dx, dy;
-		var sWidth, sHeight, dWidth, dHeight;
+    Map.prototype.draw = function (context, xView, yView) {
+        var sx, sy, dx, dy;
+        var sWidth, sHeight, dWidth, dHeight;
 
-		sx = xView;
-		sy = yView;
+        sx = xView;
+        sy = yView;
 
-		sWidth = context.canvas.width;
-		sHeight = context.canvas.height;
+        sWidth = context.canvas.width;
+        sHeight = context.canvas.height;
 
-		if(this.image.width - sx < sWidth) {
-			sWidth = this.image.width - sx;
-		}
-		if(this.image.height - sy < sHeight) {
-			sHeight = this.image.height - sy;
-		}
+        if (this.image.width - sx < sWidth) {
+            sWidth = this.image.width - sx;
+        }
+        if (this.image.height - sy < sHeight) {
+            sHeight = this.image.height - sy;
+        }
 
-		dx = 0;
-		dy = 0;
+        dx = 0;
+        dy = 0;
 
-		dWidth = sWidth;
-		dHeight = sHeight;
+        dWidth = sWidth;
+        dHeight = sHeight;
 
-		context.drawImage(this.image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
-		// context.arc(100, 100, 20, 0, Math.PI * 2);
-		// this.food(context, 100);
-	}
+        context.drawImage(this.image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
+        // context.arc(100, 100, 20, 0, Math.PI * 2);
+        // this.food(context, 100);
+    };
 
-	Map.prototype.food = function(context, len) {
+    Map.prototype.food = function (context, len) {
 
-		for(var i = 0; i < len; i++) {
-			context.save();
-			context.fillStyle = foodCoordinate[i]["color"];
-	        context.beginPath();
-	        context.arc(foodCoordinate[i]["x"], foodCoordinate[i]["y"], 2, 0, Math.PI * 2);
-	        context.closePath();
-	        context.stroke();
-	        context.fill();
-			context.restore();
-		}
-		// console.log(foodCoordinate);
-	}
+        for (var i = 0; i < len; i++) {
+            context.save();
+            context.fillStyle = foodCoordinate[i]["color"];
+            context.beginPath();
+            context.arc(foodCoordinate[i]["x"], foodCoordinate[i]["y"], 2, 0, Math.PI * 2);
+            context.closePath();
+            context.stroke();
+            context.fill();
+            context.restore();
+        }
+        // console.log(foodCoordinate);
+    };
 
-	Superpop.Map = Map;
+    Superpop.Map = Map;
 })();
 
-(function() {
+(function () {
 
-	var canvas = document.getElementById("ball");
-	var context = canvas.getContext("2d");
+    var canvas = document.getElementById("ball");
+    var context = canvas.getContext("2d");
 
-	var room = {
-		width: 1024,
-		height: 640,
-		map: new Superpop.Map(1024, 640)
-	};
-	var coordinate = {};
-	var randomColor = ["#fff", "#ff9797", "#97eaff", "#97ffbe", "#f4ff97", "#ffb797"];
-	for(var i = 0; i < 100; i++) {
-		coordinate["x"] = parseInt(Math.random() * room.width);
-		coordinate["y"] = parseInt(Math.random() * room.height);
-		coordinate["color"] = randomColor[parseInt(Math.random() * randomColor.length)]
-		foodCoordinate.push(coordinate);
-		coordinate = {};
-	}
+    var room = {
+        width: 1024,
+        height: 640,
+        map: new Superpop.Map(1024, 640)
+    };
+    var coordinate = {};
+    var randomColor = ["#fff", "#ff9797", "#97eaff", "#97ffbe", "#f4ff97", "#ffb797"];
+    for (var i = 0; i < 100; i++) {
+        coordinate["x"] = parseInt(Math.random() * room.width);
+        coordinate["y"] = parseInt(Math.random() * room.height);
+        coordinate["color"] = randomColor[parseInt(Math.random() * randomColor.length)]
+        foodCoordinate.push(coordinate);
+        coordinate = {};
+    }
 
-	room.map.generate();
+    room.map.generate();
 
 
-	player = new Superpop.Player(50, 50, 10, "#97eaff");
+    player = new Superpop.Player(50, 50, 10, "#97eaff");
 
-	var camera = new Superpop.Camera(0, 0, canvas.width, canvas.height, room.width, room.height);
-	camera.follow(player, canvas.width/2, canvas.height/2);
+    var camera = new Superpop.Camera(0, 0, canvas.width, canvas.height, room.width, room.height);
+    camera.follow(player, canvas.width / 2, canvas.height / 2);
 
-	var update = function() {
-		player.update(room.width, room.height);
-		camera.update();
-	}
+    var update = function () {
+        player.update(room.width, room.height);
+        camera.update();
+    };
 
-	var draw = function() {
-		context.clearRect(0, 0, canvas.width, canvas.height);
+    var draw = function () {
+        context.clearRect(0, 0, canvas.width, canvas.height);
 
-		// foodCoordinate.splice(0, 1);
+        // foodCoordinate.splice(0, 1);
 
-		room.map.draw(context, camera.xView, camera.yView);
-		player.draw(context, camera.xView, camera.yView);
-		// console.log(player.x);
-		// room.map.generate();
+        room.map.draw(context, camera.xView, camera.yView);
+        player.draw(context, camera.xView, camera.yView);
+        // console.log(player.x);
+        // room.map.generate();
 
-		for(var i = 0; i < foodCoordinate.length; i++) {
-			if(player.judgeEatAFood(foodCoordinate[i]["x"], foodCoordinate[i]["y"])) {
-				foodCoordinate.splice(i, 1);
-				room.map.generate();
-				player.r += 0.5;
-			}
-		}
+        for (var i = 0; i < foodCoordinate.length; i++) {
+            if (player.judgeEatAFood(foodCoordinate[i]["x"], foodCoordinate[i]["y"])) {
+                foodCoordinate.splice(i, 1);
+                room.map.generate();
+                player.r += 0.5;
+            }
+        }
 
-	}
+    };
 
-	Superpop.gameLoop = function() {
-		update();
-		draw();
-		window.requestAnimationFrame(arguments.callee);
-	}
+    Superpop.gameLoop = function () {
+        update();
+        draw();
+        window.requestAnimationFrame(arguments.callee);
+    }
 
 })();
 
@@ -356,13 +359,14 @@ var DragDrop = function () {
         diffY = 0;
 
     // 计算diffX的值
-	function calDiffX(x, y) {
-	    return 65 * Math.cos(Math.atan2(y, x));
-	}
-	// 计算diffY的值
-	function calDiffY(x, y) {
-	    return 65 * Math.sin(Math.atan2(y, x));
-	}
+    function calDiffX(x, y) {
+        return 65 * Math.cos(Math.atan2(y, x));
+    }
+
+    // 计算diffY的值
+    function calDiffY(x, y) {
+        return 65 * Math.sin(Math.atan2(y, x));
+    }
 
     function handleEvent(e) {
 
@@ -439,13 +443,13 @@ var DragDrop = function () {
 
 
 window.onload = function () {
-	// var name = prompt("please input your name", "");
-	// socket.emit("registe", name);
- //    canvas = document.getElementById("ball");
- //    if (canvas.getContext) {
- //        ctx = canvas.getContext("2d");
- //    }
- 	Superpop.gameLoop();
+    // var name = prompt("please input your name", "");
+    // socket.emit("registe", name);
+    //    canvas = document.getElementById("ball");
+    //    if (canvas.getContext) {
+    //        ctx = canvas.getContext("2d");
+    //    }
+    Superpop.gameLoop();
     DragDrop.enable();
 };
 
@@ -463,7 +467,7 @@ function Ball(x, y, r, bColor) {
 
 Ball.prototype = {
 
-	randomColor: ["#fff", "#ff9797", "#97eaff", "#97ffbe", "#f4ff97", "#ffb797"],
+    randomColor: ["#fff", "#ff9797", "#97eaff", "#97ffbe", "#f4ff97", "#ffb797"],
 
     init: function () {
         this.runningBall();
@@ -496,11 +500,11 @@ Ball.prototype = {
     },
 
     // 判断是否吃到食物
-    judgeEatAFood: function(foodX, foodY) {
+    judgeEatAFood: function (foodX, foodY) {
         return ((foodX - 2) >= (this.x - this.r) && (foodX - 2) <= (this.x + this.r)) && ((foodY - 2) >= (this.y - this.r) && (foodY - 2) <= (this.y + this.r)) ||
-        	   ((foodX + 2) >= (this.x - this.r) && (foodX + 2) <= (this.x + this.r)) && ((foodY - 2) >= (this.y - this.r) && (foodY - 2) <= (this.y + this.r)) ||
-        	   ((foodX - 2) >= (this.x - this.r) && (foodX - 2) <= (this.x + this.r)) && ((foodY + 2) >= (this.y - this.r) && (foodY + 2) <= (this.y + this.r)) ||
-        	   ((foodX + 2) >= (this.x - this.r) && (foodX + 2) <= (this.x + this.r)) && ((foodY + 2) >= (this.y - this.r) && (foodY + 2) <= (this.y + this.r));
+            ((foodX + 2) >= (this.x - this.r) && (foodX + 2) <= (this.x + this.r)) && ((foodY - 2) >= (this.y - this.r) && (foodY - 2) <= (this.y + this.r)) ||
+            ((foodX - 2) >= (this.x - this.r) && (foodX - 2) <= (this.x + this.r)) && ((foodY + 2) >= (this.y - this.r) && (foodY + 2) <= (this.y + this.r)) ||
+            ((foodX + 2) >= (this.x - this.r) && (foodX + 2) <= (this.x + this.r)) && ((foodY + 2) >= (this.y - this.r) && (foodY + 2) <= (this.y + this.r));
     },
 
     runningBall: function () {
@@ -508,15 +512,15 @@ Ball.prototype = {
         ctx.clearRect(this.x - this.r - 1, this.y - this.r - 1, 2 * this.r + 2, 2 * this.r + 2);
         this.x += this.speedX / this.speed;
         this.y += this.speedY / this.speed;
-        for(var i = 0; i < foodCoordinate.length; i++) {
-        	if(this.judgeEatAFood(foodCoordinate[i]["x"], foodCoordinate[i]["y"])) {
-        		ctx.clearRect(foodCoordinate[i]["x"] - 2, foodCoordinate[i]["y"] - 2, 4, 4);
-        		foodCoordinate.splice(i, 1);
-        		this.r += 0.5;
-        	}
+        for (var i = 0; i < foodCoordinate.length; i++) {
+            if (this.judgeEatAFood(foodCoordinate[i]["x"], foodCoordinate[i]["y"])) {
+                ctx.clearRect(foodCoordinate[i]["x"] - 2, foodCoordinate[i]["y"] - 2, 4, 4);
+                foodCoordinate.splice(i, 1);
+                this.r += 0.5;
+            }
         }
-        if(foodCoordinate.length < 190) {
-        	this.randomFood(100);
+        if (foodCoordinate.length < 190) {
+            this.randomFood(100);
         }
         this.drawABall(this.x, this.y, this.r, this.bColor);
         socket.emit('update', ball);
@@ -530,9 +534,9 @@ function Food() {
 
 Food.prototype = {
 
-	randomColor: ["#fff", "#ff9797", "#97eaff", "#97ffbe", "#f4ff97", "#ffb797"],
+    randomColor: ["#fff", "#ff9797", "#97eaff", "#97ffbe", "#f4ff97", "#ffb797"],
 
-	drawABall: function (x, y, r, bColor) {
+    drawABall: function (x, y, r, bColor) {
         // ctx.save();
         ctx.fillStyle = bColor;
         ctx.beginPath();
@@ -542,15 +546,15 @@ Food.prototype = {
         ctx.fill();
     },
 
-    randomFood: function(len) {
-		var coordinate = {};
-		for(var i = 0; i < len; i++) {
-			coordinate["x"] = parseInt(Math.random() * 1024);
-			coordinate["y"] = parseInt(Math.random() * 640);
-			foodCoordinate.push(coordinate);
-			this.drawABall(coordinate["x"], coordinate["y"], 2, this.randomColor[parseInt(Math.random() * this.randomColor.length)]);
-			coordinate = {};
-		}
-	}
+    randomFood: function (len) {
+        var coordinate = {};
+        for (var i = 0; i < len; i++) {
+            coordinate["x"] = parseInt(Math.random() * 1024);
+            coordinate["y"] = parseInt(Math.random() * 640);
+            foodCoordinate.push(coordinate);
+            this.drawABall(coordinate["x"], coordinate["y"], 2, this.randomColor[parseInt(Math.random() * this.randomColor.length)]);
+            coordinate = {};
+        }
+    }
 };
 

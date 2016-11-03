@@ -8,7 +8,7 @@ var players = [];
 
 app.use('/src', express.static('src'));
 app.get('/', function(req, res) {
-	res.sendfile('./index.html');
+	res.sendFile(__dirname + '/index.html');
 });
 
 io.on('connection', function(socket){

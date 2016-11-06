@@ -245,7 +245,7 @@ window.Superpop = {};
 
             ctx = null;
         };
-        img.src = "./src/img/bg.jpg";
+        img.src = './src/img/bg.jpg';
 
     };
 
@@ -310,7 +310,7 @@ window.Superpop = {};
     for (var i = 0; i < 100; i += 1) {
         coordinate.x = parseInt(Math.random() * room.width);
         coordinate.y = parseInt(Math.random() * room.height);
-        coordinate.color = randomColor[parseInt(Math.random() * randomColor.length)]
+        coordinate.color = randomColor[parseInt(Math.random() * randomColor.length)];
         foodCoordinate.push(coordinate);
         coordinate = {};
     }
@@ -321,6 +321,7 @@ window.Superpop = {};
     player = new Superpop.Player(50, 50, 10, '#97eaff');
 
     var camera = new Superpop.Camera(0, 0, canvas.width, canvas.height, room.width, room.height);
+    // 我是注释：xDeadZone = canvas.width / 2 , yDeadZone = canvas.height / 2;
     camera.follow(player, canvas.width / 2, canvas.height / 2);
 
     var update = function () {
@@ -335,6 +336,7 @@ window.Superpop = {};
 
         room.map.draw(context, camera.xView, camera.yView);
         player.draw(context, camera.xView, camera.yView);
+        // console.log(context)
         // console.log(player.x);
         // room.map.generate();
 

@@ -382,7 +382,7 @@ var DragDrop = function () {
         switch (event.type) {
             case 'touchstart':
                 e.preventDefault();
-                if (target.className.indexOf('draggable') !== -1) {
+                if (~target.className.indexOf('draggable')) {
                     dragging = target;
                 } else {
                     return;

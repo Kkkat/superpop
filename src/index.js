@@ -207,15 +207,28 @@ window.Superpop = {};
     };
 
     Player.prototype.judgeEatAFood = function (foodX, foodY) {
-        return ((foodX - 2) >= (this.x - this.r) && (foodX - 2) <= (this.x + this.r)) && ((foodY - 2) >= (this.y - this.r) && (foodY - 2) <= (this.y + this.r)) ||
-            ((foodX + 2) >= (this.x - this.r) && (foodX + 2) <= (this.x + this.r)) && ((foodY - 2) >= (this.y - this.r) && (foodY - 2) <= (this.y + this.r)) ||
-            ((foodX - 2) >= (this.x - this.r) && (foodX - 2) <= (this.x + this.r)) && ((foodY + 2) >= (this.y - this.r) && (foodY + 2) <= (this.y + this.r)) ||
-            ((foodX + 2) >= (this.x - this.r) && (foodX + 2) <= (this.x + this.r)) && ((foodY + 2) >= (this.y - this.r) && (foodY + 2) <= (this.y + this.r));
+        return this.r >= Superpop.Utils.prototype.calTwoSqrt(this.x, this.y, foodX, foodY);
     };
 
     Superpop.Player = Player;
 })();
 
+(function () {
+    function Utils() {}
+
+    Utils.prototype.calTwoSqrt = function (x, y, a, b) {
+        return Math.sqrt(Math.pow(x - a, 2) + Math.pow(y - b, 2));
+    };
+    Utils.prototype.calDiffX = function (x, y) {
+        return 65 * Math.cos(Math.atan2(y, x));
+    };
+
+    Utils.prototype.calDiffY = function (x, y) {
+        return 65 * Math.sin(Math.atan2(y, x));
+    };
+    Superpop.Utils = Utils;
+
+})();
 
 // map
 (function () {
@@ -301,13 +314,7 @@ window.Superpop = {};
         this.diffX = 0;
         this.diffY = 0;
     }
-    DragDrop.prototype.calDiffX = function (x,y) {
-        return 65 * Math.cos(Math.atan2(y, x));
-    };
 
-    DragDrop.prototype.calDiffY = function (x,y) {
-        return 65 * Math.sin(Math.atan2(y, x));
-    };
     DragDrop.prototype.handleEvent = function (e) {
         // 获取事件和对象
         var event = e ? e : window.event;
@@ -333,8 +340,8 @@ window.Superpop = {};
                     // 如果超出圆形
                     var distance = Math.sqrt(Math.pow(tempX, 2) + Math.pow(tempY, 2));
                     if (distance >= 65) {
-                        this.diffX = DragDrop.prototype.calDiffX(tempX, tempY);
-                        this.diffY = DragDrop.prototype.calDiffY(tempX, tempY);
+                        this.diffX = Superpop.Utils.prototype.calDiffX(tempX, tempY);
+                        this.diffY = Superpop.Utils.prototype.calDiffY(tempX, tempY);
                     } else {
                         this.diffX = tempX;
                         this.diffY = tempY;

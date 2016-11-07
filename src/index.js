@@ -2,6 +2,7 @@ var canvas, ctx;
 var ball, anotherball;
 var foodCoordinate = [];
 var player;
+var controlPanel = document.querySelector('.control-panel');
 
 // var socket = io();
 
@@ -128,7 +129,6 @@ window.Superpop = {};
             }
 
             if (this.axis === AXIS.VERTICAL || this.axis === AXIS.BOTH) {
-
                 if (this.followed.y - this.yView + this.yDeadZone > this.hView) {
                     this.yView = this.followed.y - (this.hView - this.yDeadZone);
                 }
@@ -137,7 +137,7 @@ window.Superpop = {};
                 }
             }
         }
-
+        // console.log('x: '+this.xView+' and y: '+this.yView);
         this.viewportRect.set(this.xView, this.yView);
 
         if (!this.viewportRect.within(this.worldRect)) {
@@ -358,24 +358,22 @@ window.Superpop = {};
 
 })();
 
-var DragDrop = function () {
-    var controlPanel = document.querySelector('.control-panel');
-    var dragging = null,
-        diffX = 0,
-        diffY = 0;
+(function () {
+    function DragDrop() {
+        this.dragging = null;
+        this.diffX = 0;
+        this.diffY = 0;
+    }
 
-    // 计算diffX的值
-    function calDiffX(x, y) {
+    DragDrop.prototype.calDiffX = function (x,y) {
         return 65 * Math.cos(Math.atan2(y, x));
-    }
+    };
 
-    // 计算diffY的值
-    function calDiffY(x, y) {
+    DragDrop.prototype.calDiffY = function (x,y) {
         return 65 * Math.sin(Math.atan2(y, x));
-    }
+    };
 
-    function handleEvent(e) {
-
+    DragDrop.prototype.handleEvent = function (e) {
         // 获取事件和对象
         var event = e ? e : window.event;
         var target = e.target || e.srcElement;
@@ -385,67 +383,62 @@ var DragDrop = function () {
             case 'touchstart':
                 e.preventDefault();
                 if (~target.className.indexOf('draggable')) {
-                    dragging = target;
+                    this.dragging = target;
                 } else {
                     return;
                 }
                 break;
 
             case 'touchmove':
-                if (dragging !== null) {
+                if (this.dragging !== null) {
                     var tempX, tempY;
                     // 指定位置
-
                     tempX = event.touches[0].clientX - target.parentNode.offsetLeft - 50;
                     tempY = event.touches[0].clientY - target.parentNode.offsetTop - 50;
                     // 如果超出圆形
                     var distance = Math.sqrt(Math.pow(tempX, 2) + Math.pow(tempY, 2));
                     if (distance >= 65) {
-                        diffX = calDiffX(tempX, tempY);
-                        diffY = calDiffY(tempX, tempY);
+                        this.diffX = DragDrop.prototype.calDiffX(tempX, tempY);
+                        this.diffY = DragDrop.prototype.calDiffY(tempX, tempY);
                     } else {
-                        diffX = tempX;
-                        diffY = tempY;
+                        this.diffX = tempX;
+                        this.diffY = tempY;
                     }
 
-                    dragging.style.left = diffX + 50 + 'px';
-                    dragging.style.top = diffY + 50 + 'px';
+                    this.dragging.style.left = this.diffX + 50 + 'px';
+                    this.dragging.style.top = this.diffY + 50 + 'px';
                     // 设置默认值,防止小球突然消失
-                    diffX = diffX ? diffX : 0;
-                    diffY = diffY ? diffY : 0;
+                    this.diffX = this.diffX ? this.diffX : 0;
+                    this.diffY = this.diffY ? this.diffY : 0;
                     // ball.setSpeedX(diffX);
                     // ball.setSpeedY(diffY);
-                    player.speedX = diffX;
-                    player.speedY = diffY;
+                    player.speedX = this.diffX;
+                    player.speedY = this.diffY;
                 }
                 break;
 
             case 'touchend':
-                if (dragging === null) {
+                if (this.dragging === null) {
                     return;
                 }
-                dragging.style.left = '50%';
-                dragging.style.top = '50%';
-                dragging = null;
+                this.dragging.style.left = '50%';
+                this.dragging.style.top = '50%';
+                this.dragging = null;
                 break;
         }
     };
-
-    return {
-        enable: function () {
-            controlPanel.addEventListener('touchstart', handleEvent);
-            controlPanel.addEventListener('touchmove', handleEvent);
-            controlPanel.addEventListener('touchend', handleEvent);
-        },
-
-        disable: function () {
-            controlPanel.removeEventListener('touchstart', handleEvent);
-            controlPanel.removeEventListener('touchmove', handleEvent);
-            controlPanel.removeEventListener('touchend', handleEvent);
-        }
-    }
-
-}();
+    DragDrop.prototype.enable = function () {
+        controlPanel.addEventListener('touchstart', this.handleEvent);
+        controlPanel.addEventListener('touchmove', this.handleEvent);
+        controlPanel.addEventListener('touchend', this.handleEvent);
+    };
+    DragDrop.prototype.disable = function () {
+        controlPanel.removeEventListener('touchstart', this.handleEvent);
+        controlPanel.removeEventListener('touchmove', this.handleEvent);
+        controlPanel.removeEventListener('touchend', this.handleEvent);
+    };
+    Superpop.DragDrop = DragDrop;
+})();
 
 
 window.onload = function () {
@@ -456,7 +449,7 @@ window.onload = function () {
     //        ctx = canvas.getContext("2d");
     //    }
     Superpop.gameLoop();
-    DragDrop.enable();
+    Superpop.DragDrop.prototype.enable()
 };
 
 // 球球
@@ -534,33 +527,33 @@ Ball.prototype = {
     }
 };
 
-function Food() {
-    this.randomInit(100);
-}
-
-Food.prototype = {
-
-    randomColor: ['#fff', '#ff9797', '#97eaff', '#97ffbe', '#f4ff97', '#ffb797'],
-
-    drawABall: function (x, y, r, bColor) {
-        // ctx.save();
-        ctx.fillStyle = bColor;
-        ctx.beginPath();
-        ctx.arc(x, y, r, 0, Math.PI * 2);
-        ctx.closePath();
-        ctx.stroke();
-        ctx.fill();
-    },
-
-    randomFood: function (len) {
-        var coordinate = {};
-        for (var i = 0; i < len; i += 1) {
-            coordinate.x = parseInt(Math.random() * 1024);
-            coordinate.y = parseInt(Math.random() * 640);
-            foodCoordinate.push(coordinate);
-            this.drawABall(coordinate.x, coordinate.y, 2, this.randomColor[parseInt(Math.random() * this.randomColor.length)]);
-            coordinate = {};
-        }
-    }
-};
+// function Food() {
+//     this.randomInit(100);
+// }
+//
+// Food.prototype = {
+//
+//     randomColor: ['#fff', '#ff9797', '#97eaff', '#97ffbe', '#f4ff97', '#ffb797'],
+//
+//     drawABall: function (x, y, r, bColor) {
+//         // ctx.save();
+//         ctx.fillStyle = bColor;
+//         ctx.beginPath();
+//         ctx.arc(x, y, r, 0, Math.PI * 2);
+//         ctx.closePath();
+//         ctx.stroke();
+//         ctx.fill();
+//     },
+//
+//     randomFood: function (len) {
+//         var coordinate = {};
+//         for (var i = 0; i < len; i += 1) {
+//             coordinate.x = parseInt(Math.random() * 1024);
+//             coordinate.y = parseInt(Math.random() * 640);
+//             foodCoordinate.push(coordinate);
+//             this.drawABall(coordinate.x, coordinate.y, 2, this.randomColor[parseInt(Math.random() * this.randomColor.length)]);
+//             coordinate = {};
+//         }
+//     }
+// };
 

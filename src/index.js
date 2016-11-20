@@ -82,13 +82,6 @@ window.Superpop = {};
 
 (function () {
 
-    var AXIS = {
-        NONE: 'none',
-        HORIZONTAL: 'horizontal',
-        VERTICAL: 'vertical',
-        BOTH: 'both'
-    };
-
     function Camera(xView, yView, canvasWidth, canvasHeight, worldWidth, worldHeight) {
         this.xView = xView || 0;
         this.yView = yView || 0;
@@ -99,12 +92,12 @@ window.Superpop = {};
         this.wView = canvasWidth;
         this.hView = canvasHeight;
 
-        this.axis = AXIS.BOTH;
-
         this.followed = null;
 
+        // 建立一个矩形区域，是整个画布的大小
         this.viewportRect = new Superpop.Rectangle(this.xView, this.yView, this.wView, this.hView);
 
+        // 建立一个矩形区域，是整个地图的大小
         this.worldRect = new Superpop.Rectangle(0, 0, worldWidth, worldHeight);
     }
 
@@ -117,29 +110,27 @@ window.Superpop = {};
     Camera.prototype.update = function () {
 
         if (this.followed !== null) {
-
-            if (this.axis === AXIS.HORIZONTAL || this.axis === AXIS.BOTH) {
-
-                if (this.followed.x - this.xView + this.xDeadZone > this.wView) {
-                    this.xView = this.followed.x - (this.wView - this.xDeadZone);
-                }
-                else if (this.followed.x - this.xDeadZone < this.xView) {
-                    this.xView = this.followed.x - this.xDeadZone;
-                }
+            // 右超出
+            if (this.followed.x - this.xView + this.xDeadZone > this.wView) {
+                this.xView = this.followed.x - (this.wView - this.xDeadZone);
             }
-
-            if (this.axis === AXIS.VERTICAL || this.axis === AXIS.BOTH) {
-                if (this.followed.y - this.yView + this.yDeadZone > this.hView) {
-                    this.yView = this.followed.y - (this.hView - this.yDeadZone);
-                }
-                else if (this.followed.y - this.yDeadZone < this.yView) {
-                    this.yView = this.followed.y - this.yDeadZone;
-                }
+            // 左超出
+            else if (this.followed.x - this.xDeadZone < this.xView) {
+                this.xView = this.followed.x - this.xDeadZone;
+            }
+            // 下超出
+            if (this.followed.y - this.yView + this.yDeadZone > this.hView) {
+                this.yView = this.followed.y - (this.hView - this.yDeadZone);
+            }
+            // 上超出
+            else if (this.followed.y - this.yDeadZone < this.yView) {
+                this.yView = this.followed.y - this.yDeadZone;
             }
         }
-        // console.log('x: '+this.xView+' and y: '+this.yView);
+        // 设置新的矩形区域
         this.viewportRect.set(this.xView, this.yView);
 
+        //判断新的是否在地图里面
         if (!this.viewportRect.within(this.worldRect)) {
 
             if (this.viewportRect.left < this.worldRect.left) {
@@ -179,6 +170,7 @@ window.Superpop = {};
         this.x += this.speedX / this.speed;
         this.y += this.speedY / this.speed;
 
+        // 这里设定了球一定得在地图里面
         if (this.x - this.r / 2 < 0) {
             this.x = this.r / 2;
         }
@@ -248,10 +240,10 @@ window.Superpop = {};
     }
 
     Map.prototype.generate = function () {
+        // 每吃一个小球就会重新生成一次Map
         var ctx = document.createElement('canvas').getContext('2d');
         ctx.canvas.width = this.width;
         ctx.canvas.height = this.height;
-
         var img = new Image();
         img.onload = (function () {
             ctx.drawImage(img, 0, 0, this.width, this.height);
@@ -270,7 +262,7 @@ window.Superpop = {};
         var sx, sy, dx, dy;
         var sWidth, sHeight, dWidth, dHeight;
 
-        // 开始裁剪是xy位置
+        // 开始裁剪的xy位置
         sx = xView;
         sy = yView;
 
@@ -335,6 +327,7 @@ window.Superpop = {};
                 if (~target.className.indexOf('draggable')) {
                     this.dragging = target;
                 } else {
+                    this.dragging = null;
                     return;
                 }
                 break;
@@ -412,25 +405,27 @@ window.Superpop = {};
 
 
     player = new Superpop.Player(50, 50, 10, '#97eaff');
-
+    // 我是注释：worldHeight = room.width，也就是整个地图的宽
     var camera = new Superpop.Camera(0, 0, canvas.width, canvas.height, room.width, room.height);
     // 我是注释：xDeadZone = canvas.width / 2 , yDeadZone = canvas.height / 2;
+    // 告诉camera，要跟谁，怎么跟
     camera.follow(player, canvas.width / 2, canvas.height / 2);
 
+    // 两个更新
     var update = function () {
+        // 防止球球超出地图界限
         player.update(room.width, room.height);
+        // 跟踪球球，更新出新的xView和yView
         camera.update();
     };
 
     var draw = function () {
         context.clearRect(0, 0, canvas.width, canvas.height);
 
-        // foodCoordinate.splice(0, 1);
-
+        // 根据新的xView、yView画地图
         room.map.draw(context, camera.xView, camera.yView);
         player.draw(context, camera.xView, camera.yView);
-        // console.log(context)
-        // console.log(player.x);
+
         // room.map.generate();
 
         for (var i = 0; i < foodCoordinate.length; i += 1) {

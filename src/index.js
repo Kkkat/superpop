@@ -209,10 +209,6 @@ window.Superpop = {};
     function Utils() {
     }
 
-    Utils.prototype.calSqrt = function (x, y) {
-        return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
-    };
-
     Utils.prototype.calTwoSqrt = function (x, y, a, b) {
         return Math.sqrt(Math.pow(x - a, 2) + Math.pow(y - b, 2));
     };
@@ -339,7 +335,7 @@ window.Superpop = {};
                     tempX = event.touches[0].clientX - target.parentNode.offsetLeft - 50;
                     tempY = event.touches[0].clientY - target.parentNode.offsetTop - 50;
                     // 如果超出圆形
-                    var distance = Superpop.Utils.prototype.calSqrt(tempX, tempY);
+                    var distance = Superpop.Utils.prototype.calTwoSqrt(tempX, tempY, 0, 0);
                     if (distance >= 65) {
                         this.diffX = Superpop.Utils.prototype.calDiffX(tempX, tempY);
                         this.diffY = Superpop.Utils.prototype.calDiffY(tempX, tempY);

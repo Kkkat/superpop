@@ -231,8 +231,7 @@ window.Superpop = {};
         this.width = width;
         this.height = height;
 
-        this.image = null;
-        this.randomColor = ['#fff', '#ff9797', '#97eaff', '#97ffbe', '#f4ff97', '#ffb797'];
+        this.image = new Image();
     }
 
     Map.prototype.generate = function () {
@@ -241,17 +240,13 @@ window.Superpop = {};
         ctx.canvas.width = this.width;
         ctx.canvas.height = this.height;
         var img = new Image();
+        img.src = './src/img/bg.jpg';
         img.onload = (function () {
             ctx.drawImage(img, 0, 0, this.width, this.height);
             this.food(ctx, foodCoordinate.length);
-
-            this.image = new Image();
             this.image.src = ctx.canvas.toDataURL('image/jpg');
-
             ctx = null;
         }).bind(this);
-        img.src = './src/img/bg.jpg';
-
     };
 
     Map.prototype.draw = function (context, xView, yView) {
@@ -287,7 +282,6 @@ window.Superpop = {};
     };
 
     Map.prototype.food = function (context, len) {
-
         for (var i = 0; i < len; i += 1) {
             context.save();
             context.fillStyle = foodCoordinate[i].color;
@@ -384,8 +378,8 @@ window.Superpop = {};
 
     var room = {
         width: 1024,
-        height: 640,
-        map: new Superpop.Map(1024, 640)
+        height: 768,
+        map: new Superpop.Map(1024, 768)
     };
     var coordinate = {};
     var randomColor = ['#fff', '#ff9797', '#97eaff', '#97ffbe', '#f4ff97', '#ffb797'];
@@ -400,7 +394,7 @@ window.Superpop = {};
     room.map.generate();
 
 
-    player = new Superpop.Player(50, 50, 10, '#97eaff');
+    player = new Superpop.Player(50, 50, 10, randomColor[parseInt(Math.random() * randomColor.length)]);
     // 我是注释：worldHeight = room.width，也就是整个地图的宽
     var camera = new Superpop.Camera(0, 0, canvas.width, canvas.height, room.width, room.height);
     // 我是注释：xDeadZone = canvas.width / 2 , yDeadZone = canvas.height / 2;

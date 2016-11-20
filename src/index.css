@@ -3,10 +3,6 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-canvas {
-    /*background-image: url("img/bg.jpg");*/
-}
-
 .weight-panel {
     width: 120px;
     height: 30px;

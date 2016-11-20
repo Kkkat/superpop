@@ -214,11 +214,17 @@ window.Superpop = {};
 })();
 
 (function () {
-    function Utils() {}
+    function Utils() {
+    }
+
+    Utils.prototype.calSqrt = function (x, y) {
+        return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+    };
 
     Utils.prototype.calTwoSqrt = function (x, y, a, b) {
         return Math.sqrt(Math.pow(x - a, 2) + Math.pow(y - b, 2));
     };
+
     Utils.prototype.calDiffX = function (x, y) {
         return 65 * Math.cos(Math.atan2(y, x));
     };
@@ -245,19 +251,17 @@ window.Superpop = {};
         var ctx = document.createElement('canvas').getContext('2d');
         ctx.canvas.width = this.width;
         ctx.canvas.height = this.height;
-        var _this = this;
-
 
         var img = new Image();
-        img.onload = function () {
-            ctx.drawImage(img, 0, 0, _this.width, _this.height);
-            _this.food(ctx, foodCoordinate.length);
+        img.onload = (function () {
+            ctx.drawImage(img, 0, 0, this.width, this.height);
+            this.food(ctx, foodCoordinate.length);
 
-            _this.image = new Image();
-            _this.image.src = ctx.canvas.toDataURL('image/jpg');
+            this.image = new Image();
+            this.image.src = ctx.canvas.toDataURL('image/jpg');
 
             ctx = null;
-        };
+        }).bind(this);
         img.src = './src/img/bg.jpg';
 
     };
@@ -266,9 +270,11 @@ window.Superpop = {};
         var sx, sy, dx, dy;
         var sWidth, sHeight, dWidth, dHeight;
 
+        // 开始裁剪是xy位置
         sx = xView;
         sy = yView;
 
+        // 被剪裁的img高宽
         sWidth = context.canvas.width;
         sHeight = context.canvas.height;
 
@@ -279,9 +285,11 @@ window.Superpop = {};
             sHeight = this.image.height - sy;
         }
 
+        // canvas上放置img的位置
         dx = 0;
         dy = 0;
 
+        // img的高宽
         dWidth = sWidth;
         dHeight = sHeight;
 
@@ -338,7 +346,7 @@ window.Superpop = {};
                     tempX = event.touches[0].clientX - target.parentNode.offsetLeft - 50;
                     tempY = event.touches[0].clientY - target.parentNode.offsetTop - 50;
                     // 如果超出圆形
-                    var distance = Math.sqrt(Math.pow(tempX, 2) + Math.pow(tempY, 2));
+                    var distance = Superpop.Utils.prototype.calSqrt(tempX, tempY);
                     if (distance >= 65) {
                         this.diffX = Superpop.Utils.prototype.calDiffX(tempX, tempY);
                         this.diffY = Superpop.Utils.prototype.calDiffY(tempX, tempY);

@@ -27,7 +27,7 @@ const config = {
             include: SRC,
             exclude: /node_modules/
         }, {
-            test: /.pcss$/,
+            test: /.(p)?css$/,
             use: [
                 'style-loader',
                 {

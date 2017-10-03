@@ -7,13 +7,13 @@ var randomColor = ['#fff', '#ff9797', '#97eaff', '#97ffbe', '#f4ff97', '#ffb797'
 var players = [];
 
 app.use('/src', express.static('src'));
-app.get('/', function (req, res) {
+app.get('/', function(req, res) {
     res.sendFile(__dirname + '/index.html');
 });
 
-io.on('connection', function (socket) {
+io.on('connection', function(socket) {
     var player;
-    socket.on('registe', function (name) {
+    socket.on('registe', function(name) {
         player = {
             id: socket.id,
             name: name,
@@ -29,7 +29,7 @@ io.on('connection', function (socket) {
         // socket.broadcast.emit('join', player);
     });
 
-    socket.on('create', function () {
+    socket.on('create', function() {
         var roomInfo = 'room1';
 
         io.sockets.emit('create', {
@@ -39,17 +39,17 @@ io.on('connection', function (socket) {
         });
     });
 
-    socket.on('enter', function (data) {
+    socket.on('enter', function(data) {
         socket.join(data.room);
         // io.sockets.in(data.room).emit('join', player);
         socket.broadcast.emit('join', player);
     });
 
-    socket.on('update', function (player) {
+    socket.on('update', function(player) {
         socket.broadcast.emit('update', player);
     });
 
-    socket.on('disconnect', function (msg) {
+    socket.on('disconnect', function(msg) {
         for (var i = 0; i < players.length; i++) {
             if (socket.id == players[i].id) {
                 players.splice(i, 1);
@@ -59,7 +59,6 @@ io.on('connection', function (socket) {
     });
 });
 
-http.listen(3000, function () {
+http.listen(3000, function() {
     console.log('listening on 3000');
 });
-

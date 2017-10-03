@@ -34,7 +34,7 @@ var controlPanel = document.querySelector('.control-panel');
 
 
 // requestAnim
-window.requestAnimFrame = (function () {
+window.requestAnimFrame = (function() {
     return window.requestAnimationFrame ||
         window.webkitRequestAnimationFrame ||
         window.mozRequestAnimationFrame ||
@@ -44,7 +44,7 @@ window.requestAnimFrame = (function () {
 
 window.Superpop = {};
 
-(function () {
+(function() {
     function Rectangle(left, top, width, height) {
         this.left = left || 0;
         this.top = top || 0;
@@ -54,7 +54,7 @@ window.Superpop = {};
         this.bottom = this.top + this.height;
     }
 
-    Rectangle.prototype.set = function (left, top, width, height) {
+    Rectangle.prototype.set = function(left, top, width, height) {
         this.left = left;
         this.top = top;
         this.width = width || this.width;
@@ -63,24 +63,24 @@ window.Superpop = {};
         this.bottom = this.top + this.height;
     };
 
-    Rectangle.prototype.within = function (r) {
+    Rectangle.prototype.within = function(r) {
         return (r.left <= this.left &&
-        r.right >= this.right &&
-        r.top <= this.top &&
-        r.bottom >= this.bottom);
+            r.right >= this.right &&
+            r.top <= this.top &&
+            r.bottom >= this.bottom);
     };
 
-    Rectangle.prototype.overlaps = function (r) {
+    Rectangle.prototype.overlaps = function(r) {
         return (this.left < r.right &&
-        r.left < this.right &&
-        this.top < r.bottom &&
-        r.top < this.bottom);
+            r.left < this.right &&
+            this.top < r.bottom &&
+            r.top < this.bottom);
     };
 
     Superpop.Rectangle = Rectangle;
 })();
 
-(function () {
+(function() {
 
     function Camera(xView, yView, canvasWidth, canvasHeight, worldWidth, worldHeight) {
         this.xView = xView || 0;
@@ -101,13 +101,13 @@ window.Superpop = {};
         this.worldRect = new Superpop.Rectangle(0, 0, worldWidth, worldHeight);
     }
 
-    Camera.prototype.follow = function (gameObject, xDeadZone, yDeadZone) {
+    Camera.prototype.follow = function(gameObject, xDeadZone, yDeadZone) {
         this.followed = gameObject;
         this.xDeadZone = xDeadZone;
         this.yDeadZone = yDeadZone;
     };
 
-    Camera.prototype.update = function () {
+    Camera.prototype.update = function() {
 
         if (this.followed !== null) {
             // 右超出
@@ -151,7 +151,7 @@ window.Superpop = {};
     Superpop.Camera = Camera;
 })();
 
-(function () {
+(function() {
 
     // 球球
     function Player(x, y, r, bColor) {
@@ -165,7 +165,7 @@ window.Superpop = {};
         this.randomColor = ['#fff', '#ff9797', '#97eaff', '#97ffbe', '#f4ff97', '#ffb797'];
     }
 
-    Player.prototype.update = function (worldWidth, worldHeight) {
+    Player.prototype.update = function(worldWidth, worldHeight) {
 
         this.x += this.speedX / this.speed;
         this.y += this.speedY / this.speed;
@@ -186,7 +186,7 @@ window.Superpop = {};
 
     };
 
-    Player.prototype.draw = function (context, xView, yView) {
+    Player.prototype.draw = function(context, xView, yView) {
         context.save();
         context.fillStyle = this.bColor;
         context.beginPath();
@@ -198,26 +198,25 @@ window.Superpop = {};
         context.restore();
     };
 
-    Player.prototype.judgeEatAFood = function (foodX, foodY) {
+    Player.prototype.judgeEatAFood = function(foodX, foodY) {
         return this.r >= Superpop.Utils.prototype.calTwoSqrt(this.x, this.y, foodX, foodY);
     };
 
     Superpop.Player = Player;
 })();
 
-(function () {
-    function Utils() {
-    }
+(function() {
+    function Utils() {}
 
-    Utils.prototype.calTwoSqrt = function (x, y, a, b) {
+    Utils.prototype.calTwoSqrt = function(x, y, a, b) {
         return Math.sqrt(Math.pow(x - a, 2) + Math.pow(y - b, 2));
     };
 
-    Utils.prototype.calDiffX = function (x, y) {
+    Utils.prototype.calDiffX = function(x, y) {
         return 65 * Math.cos(Math.atan2(y, x));
     };
 
-    Utils.prototype.calDiffY = function (x, y) {
+    Utils.prototype.calDiffY = function(x, y) {
         return 65 * Math.sin(Math.atan2(y, x));
     };
     Superpop.Utils = Utils;
@@ -225,7 +224,7 @@ window.Superpop = {};
 })();
 
 // map
-(function () {
+(function() {
 
     function Map(width, height) {
         this.width = width;
@@ -234,14 +233,16 @@ window.Superpop = {};
         this.image = new Image();
     }
 
-    Map.prototype.generate = function () {
+    Map.prototype.generate = function() {
         // 每吃一个小球就会重新生成一次Map
         var ctx = document.createElement('canvas').getContext('2d');
         ctx.canvas.width = this.width;
         ctx.canvas.height = this.height;
         var img = new Image();
         img.src = './src/img/bg.jpg';
-        img.onload = (function () {
+        // img.crossOrigin = '*';
+        img.onload = (function() {
+
             ctx.drawImage(img, 0, 0, this.width, this.height);
             this.food(ctx, foodCoordinate.length);
             this.image.src = ctx.canvas.toDataURL('image/jpg');
@@ -249,7 +250,7 @@ window.Superpop = {};
         }).bind(this);
     };
 
-    Map.prototype.draw = function (context, xView, yView) {
+    Map.prototype.draw = function(context, xView, yView) {
         var sx, sy, dx, dy;
         var sWidth, sHeight, dWidth, dHeight;
 
@@ -281,7 +282,7 @@ window.Superpop = {};
         // this.food(context, 100);
     };
 
-    Map.prototype.food = function (context, len) {
+    Map.prototype.food = function(context, len) {
         for (var i = 0; i < len; i += 1) {
             context.save();
             context.fillStyle = foodCoordinate[i].color;
@@ -298,14 +299,14 @@ window.Superpop = {};
     Superpop.Map = Map;
 })();
 
-(function () {
+(function() {
     function DragDrop() {
         this.dragging = null;
         this.diffX = 0;
         this.diffY = 0;
     }
 
-    DragDrop.prototype.handleEvent = function (e) {
+    DragDrop.prototype.handleEvent = function(e) {
         // 获取事件和对象
         var event = e ? e : window.event;
         var target = e.target || e.srcElement;
@@ -358,12 +359,12 @@ window.Superpop = {};
                 break;
         }
     };
-    DragDrop.prototype.enable = function () {
+    DragDrop.prototype.enable = function() {
         controlPanel.addEventListener('touchstart', this.handleEvent);
         controlPanel.addEventListener('touchmove', this.handleEvent);
         controlPanel.addEventListener('touchend', this.handleEvent);
     };
-    DragDrop.prototype.disable = function () {
+    DragDrop.prototype.disable = function() {
         controlPanel.removeEventListener('touchstart', this.handleEvent);
         controlPanel.removeEventListener('touchmove', this.handleEvent);
         controlPanel.removeEventListener('touchend', this.handleEvent);
@@ -371,7 +372,7 @@ window.Superpop = {};
     Superpop.DragDrop = DragDrop;
 })();
 
-(function () {
+(function() {
 
     var canvas = document.getElementById('ball');
     var context = canvas.getContext('2d');
@@ -402,14 +403,14 @@ window.Superpop = {};
     camera.follow(player, canvas.width / 2, canvas.height / 2);
 
     // 两个更新
-    var update = function () {
+    var update = function() {
         // 防止球球超出地图界限
         player.update(room.width, room.height);
         // 跟踪球球，更新出新的xView和yView
         camera.update();
     };
 
-    var draw = function () {
+    var draw = function() {
         context.clearRect(0, 0, canvas.width, canvas.height);
 
         // 根据新的xView、yView画地图
@@ -428,7 +429,7 @@ window.Superpop = {};
 
     };
 
-    Superpop.gameLoop = function () {
+    Superpop.gameLoop = function() {
         update();
         draw();
         window.requestAnimationFrame(arguments.callee);
@@ -436,7 +437,7 @@ window.Superpop = {};
 
 })();
 
-window.onload = function () {
+window.onload = function() {
     // var name = prompt("please input your name", "");
     // socket.emit("registe", name);
     //    canvas = document.getElementById("ball");
@@ -446,4 +447,3 @@ window.onload = function () {
     Superpop.gameLoop();
     Superpop.DragDrop.prototype.enable()
 };
-

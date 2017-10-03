@@ -1,4 +1,0 @@
-// webpack的入口文件 , 用于加载资源模块
-require('./src/reset.css');
-require('./src/index.js');
-require('./src/index.css');

@@ -3,6 +3,8 @@ var ball, anotherball;
 var foodCoordinate = [];
 var player;
 var controlPanel = document.querySelector('.control-panel');
+import './css/reset';
+import './css/index';
 
 // var socket = io();
 
@@ -432,7 +434,7 @@ window.Superpop = {};
     Superpop.gameLoop = function() {
         update();
         draw();
-        window.requestAnimationFrame(arguments.callee);
+        window.requestAnimationFrame(Superpop.gameLoop);
     }
 
 })();

@@ -1,5 +1,11 @@
 import Rectangle from './Rectangle';
 
+/**
+ * 相机
+ *
+ * @export
+ * @class Camera
+ */
 export default class Camera {
     constructor(xView, yView, canvasWidth, canvasHeight, worldWidth, worldHeight) {
         this.xView = xView || 0;
@@ -42,7 +48,7 @@ export default class Camera {
         // 设置新的矩形区域
         this.viewportRect.set(this.xView, this.yView);
 
-        //判断新的是否在地图里面
+        // 判断新的是否在地图里面
         if (!this.viewportRect.within(this.worldRect)) {
 
             if (this.viewportRect.left < this.worldRect.left) {

@@ -1,3 +1,9 @@
+/**
+ * 视角
+ *
+ * @export
+ * @class Rectangle
+ */
 export default class Rectangle {
     constructor(left, top, width, height) {
         this.left = left || 0;

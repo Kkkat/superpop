@@ -1,15 +1,21 @@
 import Map from './Map';
 import Player from './Player';
 import Camera from './Camera';
+import randomColor from '../config/color';
 
-const randomColor = ['#fff', '#ff9797', '#97eaff', '#97ffbe', '#f4ff97', '#ffb797'];
-export const player = new Player(50, 50, 10, randomColor[parseInt(Math.random() * randomColor.length)]);
+export const player = new Player(50, 50, 10, randomColor[parseInt(Math.random() * randomColor.length, 10)]);
 export const foodCoordinate = [];
+export const canvas = document.getElementById('ball');
+export const context = canvas.getContext('2d');
+
+/**
+ * 球球
+ *
+ * @export
+ * @class SuperPop
+ */
 export default class SuperPop {
     constructor() {
-        this.canvas = document.getElementById('ball');
-        this.context = this.canvas.getContext('2d');
-
         this.room = {
             width: 1024,
             height: 768,
@@ -19,15 +25,15 @@ export default class SuperPop {
             const coordinate = {};
             coordinate.x = Number(Math.random() * this.room.width);
             coordinate.y = Number(Math.random() * this.room.height);
-            coordinate.color = randomColor[Number(Math.floor(Math.random() * randomColor.length))];
+            coordinate.color = randomColor[parseInt(Math.random() * randomColor.length, 10)];
             foodCoordinate.push(coordinate);
         }
         this.room.map.generate();
         // 我是注释：worldHeight = room.width，也就是整个地图的宽
-        this.camera = new Camera(0, 0, this.canvas.width, this.canvas.height, this.room.width, this.room.height);
+        this.camera = new Camera(0, 0, canvas.width, canvas.height, this.room.width * 2, this.room.height * 2);
         // 我是注释：xDeadZone = canvas.width / 2 , yDeadZone = canvas.height / 2;
         // 告诉camera，要跟谁，怎么跟
-        this.camera.follow(player, this.canvas.width / 2, this.canvas.height / 2);
+        this.camera.follow(player, canvas.width / 2, canvas.height / 2);
     }
 
     // 两个更新
@@ -39,11 +45,11 @@ export default class SuperPop {
     };
 
     draw = () => {
-        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        context.clearRect(0, 0, canvas.width, canvas.height);
 
         // 根据新的xView、yView画地图
-        this.room.map.draw(this.context, this.camera.xView, this.camera.yView);
-        player.draw(this.context, this.camera.xView, this.camera.yView);
+        this.room.map.draw(context, this.camera.xView, this.camera.yView);
+        player.draw(context, this.camera.xView, this.camera.yView);
 
         // room.map.generate();
 

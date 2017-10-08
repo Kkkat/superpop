@@ -1,6 +1,12 @@
 import { calTwoSqrt, calDiffY, calDiffX } from '../utils';
 import { player } from './index'
 
+/**
+ * 拖动事件
+ *
+ * @export
+ * @class DragDrop
+ */
 export default class DragDrop {
     constructor() {
         this.dragging = null;
@@ -27,7 +33,7 @@ export default class DragDrop {
                 break;
 
             case 'touchmove':
-                if (this.dragging !== null) {
+                if (this.dragging) {
                     let tempX, tempY;
                     // 指定位置
                     tempX = event.touches[0].clientX - target.parentNode.offsetLeft - 50;
@@ -53,7 +59,7 @@ export default class DragDrop {
                 break;
 
             case 'touchend':
-                if (this.dragging === null) {
+                if (!this.dragging) {
                     return;
                 }
                 this.dragging.style.left = '50%';

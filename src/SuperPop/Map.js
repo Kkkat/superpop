@@ -1,6 +1,12 @@
-import { foodCoordinate } from './index';
+import { foodCoordinate, context } from './index';
 import background from '../img/bg.jpg';
 
+/**
+ * 地图
+ *
+ * @export
+ * @class Map
+ */
 export default class Map {
     constructor(width, height) {
         this.width = width;
@@ -15,13 +21,12 @@ export default class Map {
         ctx.canvas.width = this.width;
         ctx.canvas.height = this.height;
         const img = new Image();
-        img.src = background;
         img.onload = () => {
             ctx.drawImage(img, 0, 0, this.width, this.height);
-            this.food(ctx, foodCoordinate.length);
+            this.food(ctx);
             this.image.src = ctx.canvas.toDataURL('image/jpg');
-            // ctx = null;
-        };
+        }
+        img.src = background;
     };
 
     draw = (context, xView, yView) => {
@@ -53,20 +58,19 @@ export default class Map {
 
         context.drawImage(this.image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
         // context.arc(100, 100, 20, 0, Math.PI * 2);
-        // this.food(context, 100);
+        // this.food(context);
     };
 
-    food = (context, len) => {
-        for (var i = 0; i < len; i += 1) {
-            context.save();
-            context.fillStyle = foodCoordinate[i].color;
-            context.beginPath();
-            context.arc(foodCoordinate[i].x, foodCoordinate[i].y, 2, 0, Math.PI * 2);
-            context.closePath();
-            context.stroke();
-            context.fill();
-            context.restore();
+    food = (ctx) => {
+        for (let i = 0; i < foodCoordinate.length; i += 1) {
+            ctx.save();
+            ctx.fillStyle = foodCoordinate[i].color;
+            ctx.beginPath();
+            ctx.arc(foodCoordinate[i].x, foodCoordinate[i].y, 2, 0, Math.PI * 2);
+            ctx.closePath();
+            ctx.stroke();
+            ctx.fill();
+            ctx.restore();
         }
-        // console.log(foodCoordinate);
     };
 }

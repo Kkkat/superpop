@@ -1,5 +1,11 @@
 import { calTwoSqrt } from '../utils';
 
+/**
+ * 选手
+ *
+ * @export
+ * @class Player
+ */
 export default class Player {
     constructor(x, y, r, bColor) {
         this.r = r;
@@ -9,7 +15,6 @@ export default class Player {
         this.speedY = 0;
         this.speed = 60;
         this.bColor = bColor;
-        this.randomColor = ['#fff', '#ff9797', '#97eaff', '#97ffbe', '#f4ff97', '#ffb797'];
     }
 
     update = (worldWidth, worldHeight) => {

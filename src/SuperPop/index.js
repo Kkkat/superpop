@@ -2,6 +2,7 @@ import Map from './Map';
 import Player from './Player';
 import Camera from './Camera';
 import randomColor from '../config/color';
+import CONSTANTS from '../config/constants';
 
 export const player = new Player(50, 50, 10, randomColor[parseInt(Math.random() * randomColor.length, 10)]);
 export const foodCoordinate = [];
@@ -17,10 +18,11 @@ export const context = canvas.getContext('2d');
 export default class SuperPop {
     constructor() {
         this.room = {
-            width: 1024,
-            height: 768,
-            map: new Map(1024, 768)
+            width: CONSTANTS.WIDTH,
+            height: CONSTANTS.HEIGHT,
+            map: new Map(CONSTANTS.WIDTH, CONSTANTS.HEIGHT)
         };
+        // 生成食物
         for (let i = 0; i < 100; i += 1) {
             const coordinate = {};
             coordinate.x = Number(Math.random() * this.room.width);
@@ -30,7 +32,7 @@ export default class SuperPop {
         }
         this.room.map.generate();
         // 我是注释：worldHeight = room.width，也就是整个地图的宽
-        this.camera = new Camera(0, 0, canvas.width, canvas.height, this.room.width * 2, this.room.height * 2);
+        this.camera = new Camera(500, 500, canvas.width, canvas.height, this.room.width * 2, this.room.height * 2);
         // 我是注释：xDeadZone = canvas.width / 2 , yDeadZone = canvas.height / 2;
         // 告诉camera，要跟谁，怎么跟
         this.camera.follow(player, canvas.width / 2, canvas.height / 2);

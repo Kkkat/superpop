@@ -5,11 +5,11 @@
  * @class Rectangle
  */
 export default class Rectangle {
-    constructor(left, top, width, height) {
-        this.left = left || 0;
-        this.top = top || 0;
-        this.width = width || 0;
-        this.height = height || 0;
+    constructor(left = 0, top = 0, width = 0, height = 0) {
+        this.left = left;
+        this.top = top;
+        this.width = width;
+        this.height = height;
         this.right = this.left + this.width;
         this.bottom = this.top + this.height;
     }

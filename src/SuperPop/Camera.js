@@ -7,9 +7,9 @@ import Rectangle from './Rectangle';
  * @class Camera
  */
 export default class Camera {
-    constructor(xView, yView, canvasWidth, canvasHeight, worldWidth, worldHeight) {
-        this.xView = xView || 0;
-        this.yView = yView || 0;
+    constructor(xView = 0, yView = 0, canvasWidth, canvasHeight, worldWidth, worldHeight) {
+        this.xView = xView;
+        this.yView = yView;
 
         this.xDeadZone = 0;
         this.yDeadZone = 0;

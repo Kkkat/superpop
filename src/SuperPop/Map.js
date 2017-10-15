@@ -23,7 +23,7 @@ export default class Map {
         const img = new Image();
         img.onload = () => {
             ctx.drawImage(img, 0, 0, this.width, this.height);
-            this.food(ctx);
+            this.produceFood(ctx);
             this.image.src = ctx.canvas.toDataURL('image/jpg');
         }
         img.src = background;
@@ -58,10 +58,10 @@ export default class Map {
 
         context.drawImage(this.image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
         // context.arc(100, 100, 20, 0, Math.PI * 2);
-        // this.food(context);
+        // this.produceFood(context);
     };
 
-    food = (ctx) => {
+    produceFood = (ctx) => {
         for (let i = 0; i < foodCoordinate.length; i += 1) {
             ctx.save();
             ctx.fillStyle = foodCoordinate[i].color;

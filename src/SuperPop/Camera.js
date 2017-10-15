@@ -46,7 +46,7 @@ export default class Camera {
             }
         }
         // 设置新的矩形区域
-        this.viewportRect.set(this.xView, this.yView);
+        // this.viewportRect.set(this.xView, this.yView);
 
         // 判断新的是否在地图里面
         if (!this.viewportRect.within(this.worldRect)) {

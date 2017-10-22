@@ -68,7 +68,8 @@ switch (NODE_ENV) {
         config.devServer = {
             hot: true,
             inline: true,
-            stats: 'normal'
+            stats: 'normal',
+            host: '0.0.0.0'
         }
         config.plugins.push(
             new webpack.HotModuleReplacementPlugin(),

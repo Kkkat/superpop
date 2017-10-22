@@ -62,15 +62,17 @@ export default class Map {
     };
 
     produceFood = (ctx) => {
-        for (let i = 0; i < foodCoordinate.length; i += 1) {
-            ctx.save();
-            ctx.fillStyle = foodCoordinate[i].color;
-            ctx.beginPath();
-            ctx.arc(foodCoordinate[i].x, foodCoordinate[i].y, 2, 0, Math.PI * 2);
-            ctx.closePath();
-            ctx.stroke();
-            ctx.fill();
-            ctx.restore();
-        }
+        foodCoordinate.forEach(item => {
+            item.forEach(i => {
+                ctx.save();
+                ctx.fillStyle = i.color;
+                ctx.beginPath();
+                ctx.arc(i.x, i.y, 2, 0, Math.PI * 2);
+                ctx.closePath();
+                ctx.stroke();
+                ctx.fill();
+                ctx.restore();
+            })
+        });
     };
 }

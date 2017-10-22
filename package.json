@@ -5,7 +5,8 @@
     "main": "super.js",
     "scripts": {
         "build": "cross-env NODE_ENV=production webpack",
-        "dev": "cross-env NODE_ENV=development webpack-dev-server --progress"
+        "dev": "cross-env NODE_ENV=development webpack-dev-server --progress",
+        "lint": "eslint src"
     },
     "keywords": [
         "游戏",
@@ -22,11 +23,12 @@
         "copy-webpack-plugin": "^4.1.0",
         "cross-env": "^5.0.5",
         "css-loader": "^0.28.7",
-        "eslint": "^4.8.0",
-        "eslint-config-airbnb": "^15.1.0",
+        "eslint": "^4.9.0",
+        "eslint-config-airbnb": "^16.1.0",
         "eslint-loader": "^1.9.0",
-        "eslint-plugin-import": "^2.7.0",
+        "eslint-plugin-import": "^2.8.0",
         "eslint-plugin-jsx-a11y": "^6.0.2",
+        "eslint-plugin-react": "^7.4.0",
         "extract-text-webpack-plugin": "^3.0.0",
         "file-loader": "^1.1.4",
         "happypack": "^4.0.0",

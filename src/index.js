@@ -2,8 +2,8 @@
 // var ball, anotherball;
 // var foodCoordinate = [];
 // var player;
-import './css/reset';
-import './css/index';
+import './css/reset.css';
+import './css/index.css';
 import SuperPop from './SuperPop';
 import DragDrop from './SuperPop/DragDrop';
 

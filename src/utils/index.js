@@ -5,24 +5,18 @@
  * @param {Number} a
  * @param {Number} b
  */
-export const calTwoSqrt = (x, y, a, b) => {
-    return Math.sqrt(Math.pow(x - a, 2) + Math.pow(y - b, 2));
-};
+export const calTwoSqrt = (x, y, a, b) => Math.sqrt(((x - a) ** 2) + ((y - b) ** 2));
 
 /**
  * 计算到X的差距
  * @param {Number} x
  * @param {Number} y
  */
-export const calDiffX = (x, y) => {
-    return 65 * Math.cos(Math.atan2(y, x));
-};
+export const calDiffX = (x, y) => 65 * Math.cos(Math.atan2(y, x));
 
 /**
  * 计算到Y的差距
  * @param {Number} x
  * @param {Number} y
  */
-export const calDiffY = function(x, y) {
-    return 65 * Math.sin(Math.atan2(y, x));
-};
+export const calDiffY = (x, y) => 65 * Math.sin(Math.atan2(y, x));

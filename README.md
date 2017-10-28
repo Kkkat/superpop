@@ -1,11 +1,16 @@
 # superpop
 
+球球大作战
+
 ## 安装
 
-    npm install
+    yarn install
 
-## 开发
+## 运行
 
-    npm run dev
-    
-然后打开 http://localhost:8080/webpack-dev-server/ 就可以热加载了
+    yarn run dev
+
+## TODO
+
+<input type="checkbox">一直生成新的食物</checkbox>
+<input type="checkbox">写个socket服务器</checkbox>

@@ -62,7 +62,9 @@ export default class SuperPop {
     }
 
     update = () => {
-        if (!dragging) return;
+        if (!dragging) {
+            return;
+        }
         // 防止球球超出地图界限
         player.update(this.room.width, this.room.height);
         // 跟踪球球，更新出新的xView和yView
@@ -79,7 +81,7 @@ export default class SuperPop {
     };
 
     eat = () => {
-        // 如果不拖了，就不判断是不是吃到食物了
+        // 如果不拖了，就不判断吃到食物了
         if (!dragging) {
             return;
         }

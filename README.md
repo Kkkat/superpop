@@ -12,8 +12,6 @@
 
 ## TODO
 
-<input type="checkbox"/> 一直生成新的食物
-<input type="checkbox" disabled/> 写个socket服务器
+- [ ] 一直生成新的食物
+- [ ] 写个socket服务器
 
-
-[[members]]

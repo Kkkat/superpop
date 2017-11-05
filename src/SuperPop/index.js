@@ -27,8 +27,14 @@ export default class SuperPop {
             height: CONSTANTS.HEIGHT,
             map: new Map(CONSTANTS.WIDTH, CONSTANTS.HEIGHT)
         };
+        this.unit = CONSTANTS.WIDTH / CONSTANTS.SPLIT_MAP_NUM;
+        // 获取图的界限，并存在 this.zone 中
+        this.zone = this.generateZone();
         // 生成食物
         this.initFood();
+
+        // 生成新的食物
+        // this.newFood();
 
         this.room.map.generate();
         // 我是注释：worldHeight = room.width，也就是整个地图的宽
@@ -39,21 +45,34 @@ export default class SuperPop {
         this.camera.follow(player, CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2);
     }
 
-    initFood = () => {
+    generateZone = () => {
         const zone = [];
-        const unit = CONSTANTS.WIDTH / CONSTANTS.SPLIT_MAP_NUM;
         for (let i = 0; i < CONSTANTS.SPLIT_MAP_NUM; i += 1) {
             zone.push({
-                begin: unit * i,
-            })
+                begin: this.unit * i,
+            });
         }
+        return zone;
+    }
+
+    initFood = () => {
+        this.generateFood(CONSTANTS.INIT_FOOD_NUM);
+    }
+
+    newFood = () => {
+        setInterval(() => {
+            this.generateFood(CONSTANTS.UPDATE_FOOD_NUM);
+        }, CONSTANTS.UPDATE_FOOD_TIME)
+    }
+
+    generateFood = (num) => {
         for (let i = 0; i < CONSTANTS.SPLIT_MAP_NUM; i += 1) {
-            for (let j = 0; j < CONSTANTS.INIT_FOOD_NUM / CONSTANTS.SPLIT_MAP_NUM; j += 1) {
+            for (let j = 0; j < num / CONSTANTS.SPLIT_MAP_NUM; j += 1) {
                 if (!foodCoordinate[i]) {
                     foodCoordinate[i] = [];
                 }
                 foodCoordinate[i].push({
-                    x: Math.random() * unit + zone[i].begin,
+                    x: Math.random() * this.unit + this.zone[i].begin,
                     y: Math.random() * this.room.height,
                     color: randomColor[parseInt(Math.random() * randomColor.length, 10)]
                 });
@@ -77,7 +96,6 @@ export default class SuperPop {
         // 根据新的xView、yView画地图
         this.room.map.draw(context, this.camera.xView, this.camera.yView);
         player.draw(context, this.camera.xView, this.camera.yView);
-
     };
 
     eat = () => {
@@ -92,18 +110,19 @@ export default class SuperPop {
         for (let i = 0; i < foodCoordinate[index].length; i += 1) {
             // 如果吃到了，后期优化，开销太大
             if (player.judgeEatAFood(foodCoordinate[index][i].x, foodCoordinate[index][i].y)) {
+                // console.time('eat');
                 foodCoordinate[index].splice(i, 1);
                 this.room.map.generate();
                 // 后期这里应该是计算质量，然后判断半径
                 player.r += 0.5;
+                // console.timeEnd('eat');
             }
         }
         // console.timeEnd('judgeFoodTime');
     }
 
     judgeZone = () => {
-        const unit = CONSTANTS.WIDTH / CONSTANTS.SPLIT_MAP_NUM;
-        return Math.ceil(player.x / unit) - 1;
+        return Math.ceil(player.x / this.unit) - 1;
     }
 
     gameLoop = () => {

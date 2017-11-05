@@ -7,4 +7,8 @@ export default {
     SPLIT_MAP_NUM: 100,
     // 初始多少个食物
     INIT_FOOD_NUM: 100,
+    // 每多少毫秒更新食物
+    UPDATE_FOOD_TIME: 1000,
+    // 更新多少食物
+    UPDATE_FOOD_NUM: 100,
 };

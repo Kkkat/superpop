@@ -7,6 +7,25 @@
             {
                 "SwitchCase": 1
             }
+        ],
+        "import/no-unresolved": [
+            2,
+            {
+                "ignore": [
+                    "^configs\/.*$",
+                    "^utils\/.*$"
+                ]
+            }
+        ],
+        "import/extensions": [
+            2,
+            {
+                "^config\/.*$": "never",
+                "^utils\/.*$": "never"
+            }
+        ],
+        "import/no-extraneous-dependencies": [
+            "off"
         ]
     }
 }

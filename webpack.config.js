@@ -19,6 +19,10 @@ const config = {
     resolve: {
         extensions: [".js", ".json", ".css", ".pcss"],
         // extensions that are used
+        alias: {
+            configs: path.join(__dirname, 'configs'),
+            utils: path.join(__dirname, 'utils')
+        }
     },
     module: {
         rules: [{

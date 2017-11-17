@@ -1,4 +1,4 @@
-import { calTwoSqrt, calDiffY, calDiffX } from '../utils';
+import { calTwoSqrt, calDiffY, calDiffX } from 'utils';
 import { player } from './index';
 
 export let dragging = null;

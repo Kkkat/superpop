@@ -1,8 +1,8 @@
 import Map from './Map';
 import Player from './Player';
 import Camera from './Camera';
-import randomColor from '../config/color';
-import CONSTANTS from '../config/constants';
+import randomColor from 'configs/color';
+import CONSTANTS from 'configs/constants';
 import { dragging } from './DragDrop';
 
 export const canvas = document.getElementById('ball');

@@ -1,4 +1,4 @@
-import { calTwoSqrt } from '../utils';
+import { calTwoSqrt } from 'utils';
 
 /**
  * 选手

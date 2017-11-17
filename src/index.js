@@ -1,7 +1,3 @@
-// var canvas, ctx;
-// var ball, anotherball;
-// var foodCoordinate = [];
-// var player;
 import './css/reset.css';
 import './css/index.css';
 import SuperPop from './SuperPop';
